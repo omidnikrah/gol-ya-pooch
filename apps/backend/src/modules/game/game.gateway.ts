@@ -10,9 +10,11 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { GameService } from './game.service';
-import { StartGameDto } from './dto/start-game.dto';
+import { CreateGameRoomDTO } from './dto/create-game-room.dto';
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import { WsValidationExceptionFilter } from 'src/common/filters/ws-exception.filter';
+import { v4 as uuidV4 } from 'uuid';
+import { JoinGameRoomDTO } from 'src/modules/game/dto/join-game-room.dto';
 
 @UsePipes(new ValidationPipe())
 @UseFilters(new WsValidationExceptionFilter())
@@ -41,14 +43,25 @@ export class GameGateway
     console.log(`Client disconnected: ${client.id}`);
   }
 
-  @SubscribeMessage('startGame')
-  handleStartGame(
-    @MessageBody() data: StartGameDto,
+  @SubscribeMessage('createGameRoom')
+  handleCreateGameRoom(
+    @MessageBody() data: CreateGameRoomDTO,
     @ConnectedSocket() client: Socket,
   ) {
-    const gameId = data.gameId;
-    const gameState = this.gameService.createGame(gameId);
+    const gameId = uuidV4();
+    const gameState = this.gameService.createGameRoom(gameId);
     client.join(gameId);
-    client.emit('gameStarted', gameState);
+    client.emit('gameRoomCreated', gameState);
+  }
+
+  @SubscribeMessage('joinGameRoom')
+  handleJoinGameRoom(
+    @MessageBody() data: JoinGameRoomDTO,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const { gameId, team, player } = data;
+    const gameState = this.gameService.joinGameRoom(gameId, team, player);
+    client.join(gameId);
+    client.emit('gameRoomJoined', gameState);
   }
 }
