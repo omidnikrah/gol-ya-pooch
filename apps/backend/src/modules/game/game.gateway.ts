@@ -14,6 +14,7 @@ import { WsValidationExceptionFilter } from 'src/common/filters/ws-exception.fil
 import { Events } from 'src/constants/events.constants';
 import { GuessObjectLocationDTO } from 'src/modules/game/dto/guess-object-location.dto';
 import { JoinGameRoomDTO } from 'src/modules/game/dto/join-game-room.dto';
+import { ReadyTeamDTO } from 'src/modules/game/dto/ready-team.dto';
 import { SetObjectLocationDTO } from 'src/modules/game/dto/set-object-location.dto';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -67,6 +68,13 @@ export class GameGateway
     const gameState = await this.gameService.joinGameRoom(gameId, team, player);
     client.join(gameId);
     this.server.to(gameId).emit(Events.GAME_ROOM_JOINED, gameState);
+  }
+
+  @SubscribeMessage(Events.TEAM_READY)
+  async handleReadyTeam(@MessageBody() data: ReadyTeamDTO) {
+    const { gameId, team } = data;
+    const gameState = await this.gameService.readyTeam(gameId, team);
+    this.server.to(gameId).emit(Events.TEAM_READY_CONFIRMED, gameState);
   }
 
   @SubscribeMessage(Events.CHANGE_OBJECT_LOCATION)

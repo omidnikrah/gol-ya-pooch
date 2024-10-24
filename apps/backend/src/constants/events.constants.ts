@@ -3,8 +3,16 @@ export const Events = {
   GAME_ROOM_CREATED: 'game:room:created',
   JOIN_GAME_ROOM: 'game:room:join',
   GAME_ROOM_JOINED: 'game:room:joined',
+
   CHANGE_OBJECT_LOCATION: 'game:object:changeLocation',
   OBJECT_LOCATION_CHANGED: 'game:object:locationChanged',
   GUESS_OBJECT_LOCATION: 'game:object:guessLocation',
   GUESS_LOCATION_RESULT: 'game:object:guessResult',
+
+  TEAM_READY: 'game:team:ready',
+  TEAM_READY_CONFIRMED: 'game:team:readyConfirmed',
+
+  REQUEST_EMPTY_HAND: 'game:opponent:requestEmptyHand',
+
+  HAND_EMPTIED: 'game:player:handEmptied',
 };

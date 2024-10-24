@@ -4,6 +4,7 @@ export interface Player {
 }
 
 export interface Team {
+  isReady: boolean;
   members: Player[];
 }
 

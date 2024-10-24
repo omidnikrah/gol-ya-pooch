@@ -19,8 +19,8 @@ export class GameService {
       currentTurn: 'teamA',
       objectLocation: null,
       teams: {
-        teamA: { members: [] },
-        teamB: { members: [] },
+        teamA: { isReady: false, members: [] },
+        teamB: { isReady: false, members: [] },
       },
     };
 
@@ -60,6 +60,22 @@ export class GameService {
     team.members.push(player);
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
+
+    return gameState;
+  }
+
+  async readyTeam(
+    gameId: GameState['gameId'],
+    teamName: TeamNames,
+  ): Promise<GameState> {
+    const gameData = await this.redisClient.get(`game:${gameId}`);
+    if (!gameData) {
+      throw new WsException('Game not found');
+    }
+
+    const gameState: GameState = JSON.parse(gameData);
+
+    gameState.teams[teamName].isReady = true;
 
     return gameState;
   }
