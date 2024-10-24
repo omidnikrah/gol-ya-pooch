@@ -1,12 +1,9 @@
-const nx = require('@nx/eslint-plugin');
-
 const { fixupConfigRules, fixupPluginRules } = require('@eslint/compat');
-
+const { FlatCompat } = require('@eslint/eslintrc');
+const js = require('@eslint/js');
+const nx = require('@nx/eslint-plugin');
 const prettier = require('eslint-plugin-prettier');
 const TSLint = require('typescript-eslint');
-const js = require('@eslint/js');
-
-const { FlatCompat } = require('@eslint/eslintrc');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -19,7 +16,12 @@ module.exports = TSLint.config(
   ...nx.configs['flat/typescript'],
   ...nx.configs['flat/javascript'],
   ...fixupConfigRules(
-    compat.extends('eslint:recommended', 'plugin:prettier/recommended'),
+    compat.extends(
+      'eslint:recommended',
+      'plugin:import/warnings',
+      'plugin:import/typescript',
+      'plugin:prettier/recommended',
+    ),
   ),
   {
     plugins: {
@@ -43,6 +45,22 @@ module.exports = TSLint.config(
               onlyDependOnLibsWithTags: ['*'],
             },
           ],
+        },
+      ],
+      'import/order': [
+        'error',
+        {
+          groups: ['builtin', 'external', ['parent', 'sibling', 'index']],
+          pathGroups: [
+            {
+              pattern: './*.scss',
+              group: 'index',
+              position: 'after',
+            },
+          ],
+          pathGroupsExcludedImportTypes: ['builtin'],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
         },
       ],
     },

@@ -1,12 +1,12 @@
 import { IsObject, IsString } from 'class-validator';
-import { Player } from 'src/modules/game/game.interface';
+import { GameState, Player, TeamNames } from 'src/modules/game/game.interface';
 
 export class JoinGameRoomDTO {
   @IsString()
-  gameId: string;
+  gameId: GameState['gameId'];
 
   @IsString()
-  team: 'teamA' | 'teamB';
+  team: TeamNames;
 
   @IsObject()
   player: Player;

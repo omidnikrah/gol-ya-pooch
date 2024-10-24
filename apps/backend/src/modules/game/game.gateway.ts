@@ -1,3 +1,4 @@
+import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   WebSocketGateway,
   SubscribeMessage,
@@ -9,12 +10,15 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { GameService } from './game.service';
-import { CreateGameRoomDTO } from './dto/create-game-room.dto';
-import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import { WsValidationExceptionFilter } from 'src/common/filters/ws-exception.filter';
-import { v4 as uuidV4 } from 'uuid';
+import { Events } from 'src/constants/events.constants';
+import { GuessObjectLocationDTO } from 'src/modules/game/dto/guess-object-location.dto';
 import { JoinGameRoomDTO } from 'src/modules/game/dto/join-game-room.dto';
+import { SetObjectLocationDTO } from 'src/modules/game/dto/set-object-location.dto';
+import { v4 as uuidV4 } from 'uuid';
+
+import { CreateGameRoomDTO } from './dto/create-game-room.dto';
+import { GameService } from './game.service';
 
 @UsePipes(new ValidationPipe())
 @UseFilters(new WsValidationExceptionFilter())
@@ -43,25 +47,47 @@ export class GameGateway
     console.log(`Client disconnected: ${client.id}`);
   }
 
-  @SubscribeMessage('createGameRoom')
-  handleCreateGameRoom(
+  @SubscribeMessage(Events.CREATE_GAME_ROOM)
+  async handleCreateGameRoom(
     @MessageBody() data: CreateGameRoomDTO,
     @ConnectedSocket() client: Socket,
   ) {
     const gameId = uuidV4();
-    const gameState = this.gameService.createGameRoom(gameId);
+    const gameState = await this.gameService.createGameRoom(gameId);
     client.join(gameId);
-    client.emit('gameRoomCreated', gameState);
+    client.emit(Events.GAME_ROOM_CREATED, gameState);
   }
 
-  @SubscribeMessage('joinGameRoom')
-  handleJoinGameRoom(
+  @SubscribeMessage(Events.JOIN_GAME_ROOM)
+  async handleJoinGameRoom(
     @MessageBody() data: JoinGameRoomDTO,
     @ConnectedSocket() client: Socket,
   ) {
     const { gameId, team, player } = data;
-    const gameState = this.gameService.joinGameRoom(gameId, team, player);
+    const gameState = await this.gameService.joinGameRoom(gameId, team, player);
     client.join(gameId);
-    client.emit('gameRoomJoined', gameState);
+    this.server.to(gameId).emit(Events.GAME_ROOM_JOINED, gameState);
+  }
+
+  @SubscribeMessage(Events.CHANGE_OBJECT_LOCATION)
+  async handleSetObjectLocation(@MessageBody() data: SetObjectLocationDTO) {
+    const { gameId, playerId, hand } = data;
+    const gameState = await this.gameService.setObjectLocation(
+      gameId,
+      playerId,
+      hand,
+    );
+    this.server.to(gameId).emit(Events.OBJECT_LOCATION_CHANGED, gameState);
+  }
+
+  @SubscribeMessage(Events.GUESS_OBJECT_LOCATION)
+  async handleGuessObjectLocation(@MessageBody() data: GuessObjectLocationDTO) {
+    const { gameId, playerId, hand } = data;
+    const isWin = await this.gameService.guessObjectLocation(
+      gameId,
+      playerId,
+      hand,
+    );
+    this.server.to(gameId).emit(Events.GUESS_LOCATION_RESULT, isWin);
   }
 }

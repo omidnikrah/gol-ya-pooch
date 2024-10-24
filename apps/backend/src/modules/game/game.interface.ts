@@ -7,10 +7,17 @@ export interface Team {
   members: Player[];
 }
 
+export type HandPosition = 'left' | 'right';
+export type TeamNames = 'teamA' | 'teamB';
+
+type Teams = Record<TeamNames, Team>;
+
 export interface GameState {
   gameId: string;
-  teams: {
-    teamA: Team;
-    teamB: Team;
+  currentTurn: TeamNames;
+  objectLocation: {
+    hand: HandPosition;
+    playerId: Player['playerId'];
   };
+  teams: Teams;
 }
