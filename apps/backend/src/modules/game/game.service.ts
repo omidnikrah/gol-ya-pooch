@@ -36,12 +36,8 @@ export class GameService {
     teamName: TeamNames,
     player: Player,
   ): Promise<GameState | null> {
-    const gameData = await this.redisClient.get(`game:${gameId}`);
-    if (!gameData) {
-      throw new WsException('Game not found');
-    }
+    const gameState = await this.getGameState(gameId);
 
-    const gameState: GameState = JSON.parse(gameData);
     const team = gameState.teams[teamName];
 
     if (team.members.length >= GameConfig.maxTeamMembers) {
@@ -68,29 +64,23 @@ export class GameService {
     gameId: GameState['gameId'],
     teamName: TeamNames,
   ): Promise<GameState> {
-    const gameData = await this.redisClient.get(`game:${gameId}`);
-    if (!gameData) {
-      throw new WsException('Game not found');
-    }
-
-    const gameState: GameState = JSON.parse(gameData);
+    const gameState = await this.getGameState(gameId);
 
     gameState.teams[teamName].isReady = true;
+
+    await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 
     return gameState;
   }
 
-  async setObjectLocation(
+  async changeObjectLocation(
     gameId: GameState['gameId'],
     playerId: Player['playerId'],
     hand: HandPosition,
   ): Promise<GameState> {
-    const gameData = await this.redisClient.get(`game:${gameId}`);
-    if (!gameData) {
-      throw new WsException('Game not found');
-    }
+    await this.areTeamsReady(gameId);
 
-    const gameState: GameState = JSON.parse(gameData);
+    const gameState = await this.getGameState(gameId);
 
     gameState.objectLocation = {
       hand,
@@ -107,12 +97,9 @@ export class GameService {
     playerId: Player['playerId'],
     hand: HandPosition,
   ): Promise<boolean> {
-    const gameData = await this.redisClient.get(`game:${gameId}`);
-    if (!gameData) {
-      throw new WsException('Game not found');
-    }
+    await this.areTeamsReady(gameId);
 
-    const gameState: GameState = JSON.parse(gameData);
+    const gameState = await this.getGameState(gameId);
 
     return (
       playerId === gameState.objectLocation.playerId &&
@@ -133,8 +120,23 @@ export class GameService {
     return gameRoomsWithValues;
   }
 
-  async getGame(gameId: GameState['gameId']) {
-    const game = await this.redisClient.get(`game:${gameId}`);
-    return game ? JSON.parse(game) : null;
+  async areTeamsReady(gameId: GameState['gameId']) {
+    const gameState = await this.getGameState(gameId);
+
+    const areReady =
+      gameState.teams.teamA.isReady && gameState.teams.teamB.isReady;
+
+    if (!areReady) throw new WsException('Teams are not ready!');
+
+    return;
+  }
+
+  async getGameState(gameId: GameState['gameId']): Promise<GameState> {
+    const gameData = await this.redisClient.get(`game:${gameId}`);
+    if (!gameData) {
+      throw new WsException('Game not found');
+    }
+
+    return JSON.parse(gameData);
   }
 }

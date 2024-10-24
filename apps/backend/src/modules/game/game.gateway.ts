@@ -78,9 +78,9 @@ export class GameGateway
   }
 
   @SubscribeMessage(Events.CHANGE_OBJECT_LOCATION)
-  async handleSetObjectLocation(@MessageBody() data: SetObjectLocationDTO) {
+  async handleChangeObjectLocation(@MessageBody() data: SetObjectLocationDTO) {
     const { gameId, playerId, hand } = data;
-    const gameState = await this.gameService.setObjectLocation(
+    const gameState = await this.gameService.changeObjectLocation(
       gameId,
       playerId,
       hand,
