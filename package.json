@@ -84,7 +84,7 @@
     "webpack-cli": "^5.1.4"
   },
   "lint-staged": {
-    "{apps}/**/*.{js,ts,tsx}": [
+    "{apps,libs}/**/*.{js,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
     ]
