@@ -1,3 +1,7 @@
+export type HandPosition = 'left' | 'right';
+export type TeamNames = 'teamA' | 'teamB';
+export type CoinSide = 'Head' | 'Tail';
+
 export interface Player {
   playerId: string;
   name?: string;
@@ -7,9 +11,6 @@ export interface Team {
   isReady: boolean;
   members: Player[];
 }
-
-export type HandPosition = 'left' | 'right';
-export type TeamNames = 'teamA' | 'teamB';
 
 type Teams = Record<TeamNames, Team>;
 

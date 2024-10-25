@@ -3,6 +3,7 @@ import { WsException } from '@nestjs/websockets';
 import Redis from 'ioredis';
 import GameConfig from 'src/config/game.config';
 import {
+  CoinSide,
   GameState,
   HandPosition,
   Player,
@@ -16,7 +17,7 @@ export class GameService {
   async createGameRoom(gameId: GameState['gameId']): Promise<GameState> {
     const initialState: GameState = {
       gameId,
-      currentTurn: 'teamA',
+      currentTurn: null,
       objectLocation: null,
       teams: {
         teamA: { isReady: false, members: [] },
@@ -46,13 +47,6 @@ export class GameService {
       );
     }
 
-    if (team.members.length === 0 && teamName === gameState.currentTurn) {
-      gameState.objectLocation = {
-        hand: 'left',
-        playerId: player.playerId,
-      };
-    }
-
     team.members.push(player);
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
@@ -67,6 +61,44 @@ export class GameService {
     const gameState = await this.getGameState(gameId);
 
     gameState.teams[teamName].isReady = true;
+
+    await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
+
+    return gameState;
+  }
+
+  async chooseStarterTeam(
+    gameId: GameState['gameId'],
+    teamName: TeamNames,
+    coinSide: CoinSide,
+  ): Promise<GameState> {
+    await this.areTeamsReady(gameId);
+
+    const gameState = await this.getGameState(gameId);
+
+    if (gameState.currentTurn) {
+      throw new WsException(
+        'The starting turn for this team has already been assigned.',
+      );
+    }
+
+    const coinResult = Math.random() < 0.5 ? 'Head' : 'Tail';
+
+    if (coinResult === coinSide) {
+      gameState.currentTurn = teamName;
+    } else {
+      gameState.currentTurn = teamName === 'teamA' ? 'teamB' : 'teamA';
+    }
+
+    const teamMembers = gameState.teams[gameState.currentTurn].members;
+
+    gameState.objectLocation = {
+      hand: 'left',
+      playerId:
+        teamMembers[
+          Math.round(teamMembers.length === 1 ? 0 : teamMembers.length / 2)
+        ].playerId,
+    };
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 

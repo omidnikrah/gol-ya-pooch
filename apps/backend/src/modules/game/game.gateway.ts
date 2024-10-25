@@ -12,6 +12,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { WsValidationExceptionFilter } from 'src/common/filters/ws-exception.filter';
 import { Events } from 'src/constants/events.constants';
+import { CoinFlipDTO } from 'src/modules/game/dto/coin-flip.dto';
 import { GuessObjectLocationDTO } from 'src/modules/game/dto/guess-object-location.dto';
 import { JoinGameRoomDTO } from 'src/modules/game/dto/join-game-room.dto';
 import { ReadyTeamDTO } from 'src/modules/game/dto/ready-team.dto';
@@ -74,6 +75,17 @@ export class GameGateway
   async handleReadyTeam(@MessageBody() data: ReadyTeamDTO) {
     const { gameId, team } = data;
     const gameState = await this.gameService.readyTeam(gameId, team);
+    this.server.to(gameId).emit(Events.TEAM_READY_CONFIRMED, gameState);
+  }
+
+  @SubscribeMessage(Events.GAME_COIN_FLIP)
+  async handleChooseStarterTeam(@MessageBody() data: CoinFlipDTO) {
+    const { gameId, team, coinSide } = data;
+    const gameState = await this.gameService.chooseStarterTeam(
+      gameId,
+      team,
+      coinSide,
+    );
     this.server.to(gameId).emit(Events.TEAM_READY_CONFIRMED, gameState);
   }
 
