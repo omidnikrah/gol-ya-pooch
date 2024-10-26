@@ -65,9 +65,14 @@ export class GameGateway
     @MessageBody() data: JoinGameRoomDTO,
     @ConnectedSocket() client: Socket,
   ) {
-    const { gameId, team, player } = data;
-    const gameState = await this.gameService.joinGameRoom(gameId, team, player);
+    const { gameId, team, playerName } = data;
+    const { gameState, playerData } = await this.gameService.joinGameRoom(
+      gameId,
+      team,
+      playerName,
+    );
     client.join(gameId);
+    client.emit(Events.PLAYER_JOINED, playerData);
     this.server.to(gameId).emit(Events.GAME_ROOM_JOINED, gameState);
   }
 

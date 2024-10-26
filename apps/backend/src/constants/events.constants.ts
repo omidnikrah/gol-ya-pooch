@@ -17,4 +17,5 @@ export const Events = {
   REQUEST_EMPTY_HAND: 'game:opponent:requestEmptyHand',
 
   HAND_EMPTIED: 'game:player:handEmptied',
+  PLAYER_JOINED: 'game:player:joined',
 };

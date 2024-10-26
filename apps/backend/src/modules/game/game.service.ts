@@ -9,6 +9,7 @@ import {
   Player,
   TeamNames,
 } from 'src/modules/game/game.interface';
+import { v4 as uuidV4 } from 'uuid';
 
 @Injectable()
 export class GameService {
@@ -35,8 +36,8 @@ export class GameService {
   async joinGameRoom(
     gameId: GameState['gameId'],
     teamName: TeamNames,
-    player: Player,
-  ): Promise<GameState | null> {
+    playerName: Player['name'],
+  ): Promise<{ gameState: GameState; playerData: Player }> {
     const gameState = await this.getGameState(gameId);
 
     const team = gameState.teams[teamName];
@@ -47,11 +48,12 @@ export class GameService {
       );
     }
 
-    team.members.push(player);
+    const newPlayer = this.generatePlayer(playerName);
+    team.members.push(newPlayer);
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 
-    return gameState;
+    return { gameState: gameState, playerData: newPlayer };
   }
 
   async readyTeam(
@@ -170,5 +172,12 @@ export class GameService {
     }
 
     return JSON.parse(gameData);
+  }
+
+  generatePlayer(playerName: Player['name']) {
+    return {
+      playerId: uuidV4(),
+      name: playerName,
+    };
   }
 }
