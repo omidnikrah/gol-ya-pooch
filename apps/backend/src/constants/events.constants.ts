@@ -5,6 +5,7 @@ export const Events = {
   GAME_ROOM_JOINED: 'game:room:joined',
   GAME_COIN_FLIP: 'game:room:coinFlip',
   GAME_COIN_FLIP_RESULT: 'game:room:coinFlipResult',
+  GAME_FINISHED: 'game:room:finished',
 
   CHANGE_OBJECT_LOCATION: 'game:object:changeLocation',
   OBJECT_LOCATION_CHANGED: 'game:object:locationChanged',

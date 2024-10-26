@@ -20,6 +20,11 @@ export class GameService {
       gameId,
       currentTurn: null,
       objectLocation: null,
+      round: 1,
+      scores: {
+        teamA: 0,
+        teamB: 0,
+      },
       teams: {
         teamA: { isReady: false, members: [] },
         teamB: { isReady: false, members: [] },
@@ -130,15 +135,40 @@ export class GameService {
     gameId: GameState['gameId'],
     playerId: Player['playerId'],
     hand: HandPosition,
-  ): Promise<boolean> {
+  ): Promise<{ gameState: GameState; isGameFinished: boolean }> {
     await this.areTeamsReady(gameId);
 
     const gameState = await this.getGameState(gameId);
-
-    return (
+    let isGameFinished = false;
+    const isGuessCorrect =
       playerId === gameState.objectLocation.playerId &&
-      hand === gameState.objectLocation.hand
-    );
+      hand === gameState.objectLocation.hand;
+
+    if (!isGuessCorrect) {
+      gameState.scores[gameState.currentTurn] += 1;
+      if (gameState.scores[gameState.currentTurn] >= GameConfig.maxScores) {
+        isGameFinished = true;
+      }
+    } else {
+      gameState.currentTurn =
+        gameState.currentTurn === 'teamA' ? 'teamB' : 'teamA';
+
+      const teamMembers = gameState.teams[gameState.currentTurn].members;
+
+      gameState.objectLocation = {
+        hand: 'left',
+        playerId:
+          teamMembers[
+            Math.round(teamMembers.length === 1 ? 0 : teamMembers.length / 2)
+          ].playerId,
+      };
+    }
+
+    gameState.round += 1;
+
+    await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
+
+    return { gameState, isGameFinished };
   }
 
   async getAllGameRooms(): Promise<Record<string, GameState>> {

@@ -13,6 +13,7 @@ export interface Team {
 }
 
 type Teams = Record<TeamNames, Team>;
+type Scores = Record<TeamNames, number>;
 
 export interface GameState {
   gameId: string;
@@ -21,5 +22,7 @@ export interface GameState {
     hand: HandPosition;
     playerId: Player['playerId'];
   };
+  round: number;
+  scores: Scores;
   teams: Teams;
 }

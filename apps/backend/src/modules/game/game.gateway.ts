@@ -108,11 +108,20 @@ export class GameGateway
   @SubscribeMessage(Events.GUESS_OBJECT_LOCATION)
   async handleGuessObjectLocation(@MessageBody() data: GuessObjectLocationDTO) {
     const { gameId, playerId, hand } = data;
-    const isWin = await this.gameService.guessObjectLocation(
-      gameId,
-      playerId,
-      hand,
-    );
-    this.server.to(gameId).emit(Events.GUESS_LOCATION_RESULT, isWin);
+    const { gameState, isGameFinished } =
+      await this.gameService.guessObjectLocation(gameId, playerId, hand);
+
+    if (isGameFinished) {
+      const finishedGamePayload = {
+        winnerTeam:
+          gameState.scores.teamA > gameState.scores.teamB ? 'teamA' : 'teamB',
+        finalScores: gameState.scores,
+        roundsPlayed: gameState.round,
+      };
+
+      this.server.to(gameId).emit(Events.GAME_FINISHED, finishedGamePayload);
+    } else {
+      this.server.to(gameId).emit(Events.GUESS_LOCATION_RESULT, gameState);
+    }
   }
 }
