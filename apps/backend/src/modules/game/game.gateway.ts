@@ -1,3 +1,4 @@
+import { Events } from '@gol-ya-pooch/shared';
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   WebSocketGateway,
@@ -11,7 +12,6 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { WsValidationExceptionFilter } from 'src/common/filters/ws-exception.filter';
-import { Events } from 'src/constants/events.constants';
 import { CoinFlipDTO } from 'src/modules/game/dto/coin-flip.dto';
 import { GuessObjectLocationDTO } from 'src/modules/game/dto/guess-object-location.dto';
 import { JoinGameRoomDTO } from 'src/modules/game/dto/join-game-room.dto';
