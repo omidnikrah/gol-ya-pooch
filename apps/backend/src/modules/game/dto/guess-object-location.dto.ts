@@ -1,9 +1,6 @@
 import { IsString } from 'class-validator';
-import {
-  GameState,
-  HandPosition,
-  Player,
-} from 'src/modules/game/game.interface';
+
+import { GameState, HandPosition, Player } from '../game.interface';
 
 export class GuessObjectLocationDTO {
   @IsString()

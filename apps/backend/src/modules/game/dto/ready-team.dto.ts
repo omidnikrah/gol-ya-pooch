@@ -1,5 +1,6 @@
 import { IsString } from 'class-validator';
-import { GameState, TeamNames } from 'src/modules/game/game.interface';
+
+import { GameState, TeamNames } from '../game.interface';
 
 export class ReadyTeamDTO {
   @IsString()

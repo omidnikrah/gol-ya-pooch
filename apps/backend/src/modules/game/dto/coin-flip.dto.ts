@@ -1,9 +1,6 @@
 import { IsString } from 'class-validator';
-import {
-  CoinSide,
-  GameState,
-  TeamNames,
-} from 'src/modules/game/game.interface';
+
+import { CoinSide, GameState, TeamNames } from '../game.interface';
 
 export class CoinFlipDTO {
   @IsString()

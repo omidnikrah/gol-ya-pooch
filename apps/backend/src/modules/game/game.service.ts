@@ -2,14 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import Redis from 'ioredis';
 import GameConfig from 'src/config/game.config';
+import { v4 as uuidV4 } from 'uuid';
+
 import {
   CoinSide,
   GameState,
   HandPosition,
   Player,
   TeamNames,
-} from 'src/modules/game/game.interface';
-import { v4 as uuidV4 } from 'uuid';
+} from './game.interface';
 
 @Injectable()
 export class GameService {

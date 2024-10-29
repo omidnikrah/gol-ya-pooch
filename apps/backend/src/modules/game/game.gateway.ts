@@ -12,14 +12,14 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { WsValidationExceptionFilter } from 'src/common/filters/ws-exception.filter';
-import { CoinFlipDTO } from 'src/modules/game/dto/coin-flip.dto';
-import { GuessObjectLocationDTO } from 'src/modules/game/dto/guess-object-location.dto';
-import { JoinGameRoomDTO } from 'src/modules/game/dto/join-game-room.dto';
-import { ReadyTeamDTO } from 'src/modules/game/dto/ready-team.dto';
-import { SetObjectLocationDTO } from 'src/modules/game/dto/set-object-location.dto';
 import { v4 as uuidV4 } from 'uuid';
 
+import { CoinFlipDTO } from './dto/coin-flip.dto';
 import { CreateGameRoomDTO } from './dto/create-game-room.dto';
+import { GuessObjectLocationDTO } from './dto/guess-object-location.dto';
+import { JoinGameRoomDTO } from './dto/join-game-room.dto';
+import { ReadyTeamDTO } from './dto/ready-team.dto';
+import { SetObjectLocationDTO } from './dto/set-object-location.dto';
 import { GameService } from './game.service';
 
 @UsePipes(new ValidationPipe())
