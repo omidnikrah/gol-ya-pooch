@@ -15,6 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@gol-ya-pooch/frontend/*": ["apps/frontend/src/*"],
+      "@gol-ya-pooch/backend/*": ["apps/backend/src/*"],
       "@gol-ya-pooch/shared": ["libs/shared/src/index.ts"]
     }
   },

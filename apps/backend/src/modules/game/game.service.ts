@@ -1,7 +1,7 @@
+import GameConfig from '@gol-ya-pooch/backend/config/game.config';
 import { Injectable } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import Redis from 'ioredis';
-import GameConfig from 'src/config/game.config';
 import { v4 as uuidV4 } from 'uuid';
 
 import {

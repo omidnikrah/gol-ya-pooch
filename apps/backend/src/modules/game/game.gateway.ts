@@ -1,3 +1,4 @@
+import { WsValidationExceptionFilter } from '@gol-ya-pooch/backend/common/filters/ws-exception.filter';
 import { Events } from '@gol-ya-pooch/shared';
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
@@ -11,7 +12,6 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { WsValidationExceptionFilter } from 'src/common/filters/ws-exception.filter';
 import { v4 as uuidV4 } from 'uuid';
 
 import { CoinFlipDTO } from './dto/coin-flip.dto';

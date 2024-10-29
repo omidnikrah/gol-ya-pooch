@@ -38,6 +38,7 @@ module.exports = TSLint.config(
         'error',
         {
           enforceBuildableLibDependency: true,
+          allowCircularSelfDependency: true,
           depConstraints: [
             {
               sourceTag: 'scope:frontend',

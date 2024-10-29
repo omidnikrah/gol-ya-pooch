@@ -12,10 +12,5 @@
   ],
   "compilerOptions": {
     "esModuleInterop": true,
-    "baseUrl": "./",
-    "paths": {
-      "src/*": ["src/*"],
-      "@gol-ya-pooch/shared": ["../../libs/shared/src/index.ts"]
-    }
   }
 }
