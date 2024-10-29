@@ -1,5 +1,5 @@
-const HomePage = () => {
-  return <h1>Home Page!</h1>;
+const GameRoomPage = () => {
+  return <h1>GameRoom Page!</h1>;
 };
 
-export default HomePage;
+export default GameRoomPage;

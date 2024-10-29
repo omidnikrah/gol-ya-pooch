@@ -1,5 +1,7 @@
-export function App() {
-  return <div>Gol Ya Pooch?</div>;
-}
+import { AppRouter } from './router';
+
+const App = () => {
+  return <AppRouter />;
+};
 
 export default App;
