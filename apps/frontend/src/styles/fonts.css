@@ -1,0 +1,34 @@
+@font-face {
+  font-family: 'IranYekan';
+  src: url('/fonts/IRANYekanThin.woff2') format('woff2');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'IranYekan';
+  src: url('/fonts/IRANYekanLight.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'IranYekan';
+  src: url('/fonts/IRANYekanExtraBold.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'IranYekan';
+  src: url('/fonts/IRANYekanBlack.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'IranYekan';
+  src: url('/fonts/IRANYekanExtraBlack.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+}
