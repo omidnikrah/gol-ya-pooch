@@ -1,9 +1,25 @@
+import { useSocket } from '@gol-ya-pooch/frontend/hooks';
+import { Events } from '@gol-ya-pooch/shared';
+import { useEffect } from 'react';
+
 import CircleIcon from './assets/circle-icon.svg';
 import FlowerIcon from './assets/flower-icon.svg';
 import NineIcon from './assets/nine-icon.svg';
 import StairsIcon from './assets/stairs-icon.svg';
 
 const HomePage = () => {
+  const { emit, on } = useSocket();
+
+  const handleCreateRoom = () => {
+    emit(Events.CREATE_GAME_ROOM, {});
+  };
+
+  useEffect(() => {
+    on(Events.GAME_ROOM_CREATED, (data) => {
+      console.log('created => ', data);
+    });
+  }, []);
+
   return (
     <div className="text-center">
       <div className="absolute -top-32 w-56 h-56 rotate-45 rounded-[40px] bg-gradient-to-br from-[#201A32] to-[rgba(32, 26, 50, 0)] translate-x-1/2 right-1/2" />
@@ -45,6 +61,7 @@ const HomePage = () => {
         <button
           className="mx-4 hover:scale-110 hover:-rotate-6 transition-transform"
           type="button"
+          onClick={handleCreateRoom}
         >
           <svg width="162" height="50" viewBox="0 0 162 50">
             <path
