@@ -1,3 +1,4 @@
+import { convertToPersianNumbers } from '@gol-ya-pooch/frontend/utils';
 import clsx from 'clsx';
 import { KeyboardEvent, useState } from 'react';
 
@@ -43,62 +44,21 @@ export const JoinGameModal = () => {
               بازی چند نفره ببرمت؟
             </h3>
             <div className="my-8 inline-flex shrink-0 bg-secondary-50 rounded-full p-1">
-              <span
-                role="button"
-                tabIndex={0}
-                onKeyDown={handleKeyDown}
-                className={clsx(
-                  'px-4 py-2 text-white rounded-full cursor-pointer transition-all duration-200',
-                  {
-                    'bg-secondary': playersCount === 2,
-                  },
-                )}
-                onClick={() => setPlayersCount(2)}
-              >
-                ۲ نفره
-              </span>
-              <span
-                role="button"
-                tabIndex={0}
-                onKeyDown={handleKeyDown}
-                className={clsx(
-                  'px-4 py-2 text-white rounded-full cursor-pointer transition-all duration-200',
-                  {
-                    'bg-secondary': playersCount === 3,
-                  },
-                )}
-                onClick={() => setPlayersCount(3)}
-              >
-                ۳ نفره
-              </span>
-              <span
-                role="button"
-                tabIndex={0}
-                onKeyDown={handleKeyDown}
-                className={clsx(
-                  'px-4 py-2 text-white rounded-full cursor-pointer transition-all duration-200',
-                  {
-                    'bg-secondary': playersCount === 4,
-                  },
-                )}
-                onClick={() => setPlayersCount(4)}
-              >
-                ۴ نفره
-              </span>
-              <span
-                role="button"
-                tabIndex={0}
-                onKeyDown={handleKeyDown}
-                className={clsx(
-                  'px-4 py-2 text-white rounded-full cursor-pointer transition-all duration-200',
-                  {
-                    'bg-secondary': playersCount === 5,
-                  },
-                )}
-                onClick={() => setPlayersCount(5)}
-              >
-                ۵ نفره
-              </span>
+              {[2, 4, 6, 8].map((count) => (
+                <span
+                  key={count}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={handleKeyDown}
+                  className={clsx(
+                    'px-4 py-2 text-white rounded-full cursor-pointer transition-all duration-200',
+                    { 'bg-secondary': playersCount === count },
+                  )}
+                  onClick={() => setPlayersCount(count)}
+                >
+                  {convertToPersianNumbers(count)} نفره
+                </span>
+              ))}
             </div>
             <div>
               <button
