@@ -54,8 +54,9 @@ export class GameGateway
     @MessageBody() data: CreateGameRoomDTO,
     @ConnectedSocket() client: Socket,
   ) {
+    const { gameSize } = data;
     const gameId = uuidV4();
-    const gameState = await this.gameService.createGameRoom(gameId);
+    const gameState = await this.gameService.createGameRoom(gameId, gameSize);
     client.join(gameId);
     client.emit(Events.GAME_ROOM_CREATED, gameState);
   }

@@ -16,9 +16,13 @@ import {
 export class GameService {
   constructor(private readonly redisClient: Redis) {}
 
-  async createGameRoom(gameId: GameState['gameId']): Promise<GameState> {
+  async createGameRoom(
+    gameId: GameState['gameId'],
+    gameSize: GameState['gameSize'],
+  ): Promise<GameState> {
     const initialState: GameState = {
       gameId,
+      gameSize,
       currentTurn: null,
       objectLocation: null,
       round: 1,
