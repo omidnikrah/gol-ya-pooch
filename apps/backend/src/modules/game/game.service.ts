@@ -129,6 +129,31 @@ export class GameService {
     return { gameState: gameState, playerData: newPlayer };
   }
 
+  async joinGameRoomWithId(
+    gameSize: GameState['gameSize'],
+    gameId: GameState['gameId'],
+    teamName: TeamNames,
+    playerName: Player['name'],
+  ): Promise<{ gameState: GameState; playerData: Player }> {
+    const gameState = await this.getGameState(gameId);
+    const maxTeamPlayers = gameSize / 2;
+
+    const team = gameState.teams[teamName];
+
+    if (team.members.length >= maxTeamPlayers) {
+      throw new WsException(
+        `${teamName} already has the maximum of ${maxTeamPlayers} members`,
+      );
+    }
+
+    const newPlayer = this.generatePlayer(playerName);
+    team.members.push(newPlayer);
+
+    await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
+
+    return { gameState: gameState, playerData: newPlayer };
+  }
+
   async readyTeam(
     gameId: GameState['gameId'],
     teamName: TeamNames,

@@ -1,5 +1,5 @@
 import { WsValidationExceptionFilter } from '@gol-ya-pooch/backend/common/filters/ws-exception.filter';
-import { Events } from '@gol-ya-pooch/shared';
+import { Events, GameState, Player } from '@gol-ya-pooch/shared';
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   WebSocketGateway,
@@ -64,11 +64,24 @@ export class GameGateway
     @MessageBody() data: JoinGameRoomDTO,
     @ConnectedSocket() client: Socket,
   ) {
-    const { gameSize, playerName } = data;
-    const { gameState, playerData } = await this.gameService.joinGameRoom(
-      gameSize,
-      playerName,
-    );
+    const { gameSize, gameId, team, playerName } = data;
+
+    let gameState: GameState, playerData: Player;
+
+    if (gameId && team) {
+      ({ gameState, playerData } = await this.gameService.joinGameRoomWithId(
+        gameSize,
+        gameId,
+        team,
+        playerName,
+      ));
+    } else {
+      ({ gameState, playerData } = await this.gameService.joinGameRoom(
+        gameSize,
+        playerName,
+      ));
+    }
+
     client.join(gameState.gameId);
     client.emit(Events.PLAYER_JOINED, playerData);
     this.server.to(gameState.gameId).emit(Events.GAME_ROOM_JOINED, gameState);
