@@ -15,10 +15,59 @@ import { v4 as uuidV4 } from 'uuid';
 export class GameService {
   constructor(private readonly redisClient: Redis) {}
 
-  async createGameRoom(
-    gameId: GameState['gameId'],
-    gameSize: GameState['gameSize'],
-  ): Promise<GameState> {
+  async findRoomWithFewestRemainingPlayers(gameSize: 2 | 4 | 6 | 8): Promise<{
+    room: GameState;
+    teamName: TeamNames;
+  }> {
+    const gameKeys = await this.redisClient.keys('game:*');
+
+    if (gameKeys.length === 0) return null;
+
+    const pipeline = this.redisClient.multi();
+    gameKeys.forEach((key) => pipeline.get(key));
+    const gameStates = await pipeline.exec();
+
+    let roomWithFewestRemainingPlayers = null;
+    let teamWithSpace = null;
+    let minRemainingPlayers = Infinity;
+
+    gameStates.forEach(([error, roomData]: [never, string]) => {
+      if (error) return;
+      const room: GameState = JSON.parse(roomData);
+
+      if (room.gameSize !== gameSize) return;
+
+      const teamAPlayers = room.teams.teamA.members.length;
+      const teamBPlayers = room.teams.teamB.members.length;
+      const currentPlayers = teamAPlayers + teamBPlayers;
+      const remainingPlayers = room.gameSize - currentPlayers;
+      const maxTeamPlayers = gameSize / 2;
+
+      if (remainingPlayers < minRemainingPlayers) {
+        minRemainingPlayers = remainingPlayers;
+        roomWithFewestRemainingPlayers = room;
+
+        if (teamAPlayers < maxTeamPlayers) {
+          teamWithSpace = 'teamA';
+        } else if (teamBPlayers < maxTeamPlayers) {
+          teamWithSpace = 'teamB';
+        }
+      }
+    });
+
+    if (roomWithFewestRemainingPlayers && teamWithSpace) {
+      return {
+        room: roomWithFewestRemainingPlayers,
+        teamName: teamWithSpace,
+      };
+    }
+
+    return null;
+  }
+
+  async createGameRoom(gameSize: GameState['gameSize']): Promise<GameState> {
+    const gameId = uuidV4();
+
     const initialState: GameState = {
       gameId,
       gameSize,
@@ -43,24 +92,39 @@ export class GameService {
   }
 
   async joinGameRoom(
-    gameId: GameState['gameId'],
-    teamName: TeamNames,
+    gameSize: GameState['gameSize'],
     playerName: Player['name'],
   ): Promise<{ gameState: GameState; playerData: Player }> {
-    const gameState = await this.getGameState(gameId);
+    const gameData = await this.findRoomWithFewestRemainingPlayers(gameSize);
+    let gameRoom: GameState;
+    let teamName: TeamNames;
+
+    if (gameData) {
+      gameRoom = gameData.room;
+      teamName = gameData.teamName;
+    } else {
+      gameRoom = await this.createGameRoom(gameSize);
+      teamName = 'teamA';
+    }
+
+    const gameState = await this.getGameState(gameRoom.gameId);
 
     const team = gameState.teams[teamName];
+    const maxTeamPlayers = gameSize / 2;
 
-    if (team.members.length >= GameConfig.maxTeamMembers) {
+    if (team.members.length >= maxTeamPlayers) {
       throw new WsException(
-        `${teamName} already has the maximum of ${GameConfig.maxTeamMembers} members`,
+        `${teamName} already has the maximum of ${maxTeamPlayers} members`,
       );
     }
 
     const newPlayer = this.generatePlayer(playerName);
     team.members.push(newPlayer);
 
-    await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
+    await this.redisClient.set(
+      `game:${gameRoom.gameId}`,
+      JSON.stringify(gameState),
+    );
 
     return { gameState: gameState, playerData: newPlayer };
   }

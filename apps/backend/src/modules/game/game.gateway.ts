@@ -12,7 +12,6 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { v4 as uuidV4 } from 'uuid';
 
 import { CoinFlipDTO } from './dto/coin-flip.dto';
 import { CreateGameRoomDTO } from './dto/create-game-room.dto';
@@ -55,9 +54,8 @@ export class GameGateway
     @ConnectedSocket() client: Socket,
   ) {
     const { gameSize } = data;
-    const gameId = uuidV4();
-    const gameState = await this.gameService.createGameRoom(gameId, gameSize);
-    client.join(gameId);
+    const gameState = await this.gameService.createGameRoom(gameSize);
+    client.join(gameState.gameId);
     client.emit(Events.GAME_ROOM_CREATED, gameState);
   }
 
@@ -66,15 +64,14 @@ export class GameGateway
     @MessageBody() data: JoinGameRoomDTO,
     @ConnectedSocket() client: Socket,
   ) {
-    const { gameId, team, playerName } = data;
+    const { gameSize, playerName } = data;
     const { gameState, playerData } = await this.gameService.joinGameRoom(
-      gameId,
-      team,
+      gameSize,
       playerName,
     );
-    client.join(gameId);
+    client.join(gameState.gameId);
     client.emit(Events.PLAYER_JOINED, playerData);
-    this.server.to(gameId).emit(Events.GAME_ROOM_JOINED, gameState);
+    this.server.to(gameState.gameId).emit(Events.GAME_ROOM_JOINED, gameState);
   }
 
   @SubscribeMessage(Events.TEAM_READY)
