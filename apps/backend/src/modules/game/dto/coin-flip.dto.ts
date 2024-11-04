@@ -1,6 +1,5 @@
+import type { CoinSide, GameState, TeamNames } from '@gol-ya-pooch/shared';
 import { IsString } from 'class-validator';
-
-import { CoinSide, GameState, TeamNames } from '../game.interface';
 
 export class CoinFlipDTO {
   @IsString()

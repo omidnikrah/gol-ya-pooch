@@ -1,6 +1,5 @@
+import type { GameState, HandPosition, Player } from '@gol-ya-pooch/shared';
 import { IsString } from 'class-validator';
-
-import { GameState, HandPosition, Player } from '../game.interface';
 
 export class GuessObjectLocationDTO {
   @IsString()

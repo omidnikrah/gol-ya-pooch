@@ -1,16 +1,15 @@
 import GameConfig from '@gol-ya-pooch/backend/config/game.config';
-import { Injectable } from '@nestjs/common';
-import { WsException } from '@nestjs/websockets';
-import Redis from 'ioredis';
-import { v4 as uuidV4 } from 'uuid';
-
-import {
+import type {
   CoinSide,
   GameState,
   HandPosition,
   Player,
   TeamNames,
-} from './game.interface';
+} from '@gol-ya-pooch/shared';
+import { Injectable } from '@nestjs/common';
+import { WsException } from '@nestjs/websockets';
+import Redis from 'ioredis';
+import { v4 as uuidV4 } from 'uuid';
 
 @Injectable()
 export class GameService {

@@ -1,6 +1,5 @@
+import type { GameState } from '@gol-ya-pooch/shared';
 import { IsIn } from 'class-validator';
-
-import { GameState } from '../game.interface';
 
 export class CreateGameRoomDTO {
   @IsIn([2, 4, 6, 8], {

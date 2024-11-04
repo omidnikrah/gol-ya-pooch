@@ -1,6 +1,5 @@
+import type { GameState, TeamNames } from '@gol-ya-pooch/shared';
 import { IsOptional, IsString } from 'class-validator';
-
-import { GameState, TeamNames } from '../game.interface';
 
 export class JoinGameRoomDTO {
   @IsString()
