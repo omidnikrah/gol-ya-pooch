@@ -1,10 +1,30 @@
+import { useSocket } from '@gol-ya-pooch/frontend/hooks';
 import { convertToPersianNumbers } from '@gol-ya-pooch/frontend/utils';
+import { Events, type GameState } from '@gol-ya-pooch/shared';
 import clsx from 'clsx';
-import { KeyboardEvent, useState } from 'react';
+import { KeyboardEvent, useEffect, useState } from 'react';
+import { useLocation } from 'wouter';
 
 export const JoinGameModal = () => {
   const [gameSize, setGameSize] = useState<number>(2);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { emit, on, off } = useSocket();
+  const [, navigate] = useLocation();
+
+  useEffect(() => {
+    on(Events.GAME_ROOM_JOINED, (roomData: GameState) => {
+      setIsLoading(false);
+      if (roomData) {
+        navigate(`/game/${roomData?.gameId}`);
+        console.log(roomData);
+      }
+    });
+
+    return () => {
+      off(Events.GAME_ROOM_JOINED);
+    };
+  }, []);
 
   const handleSetGameSize = (size: number) => {
     setGameSize(size);
@@ -15,6 +35,14 @@ export const JoinGameModal = () => {
       event.preventDefault();
       handleSetGameSize(size);
     }
+  };
+
+  const handleJoinGame = () => {
+    setIsLoading(true);
+
+    emit(Events.JOIN_GAME_ROOM, {
+      gameSize,
+    });
   };
 
   return (
@@ -67,8 +95,10 @@ export const JoinGameModal = () => {
             </div>
             <div>
               <button
-                className="px-8 py-2 bg-primary text-white rounded-full"
+                className="px-8 py-2 bg-primary text-white rounded-full disabled:opacity-50 disabled:cursor-progress"
                 type="button"
+                onClick={handleJoinGame}
+                disabled={isLoading}
               >
                 جوین به بازی
               </button>
