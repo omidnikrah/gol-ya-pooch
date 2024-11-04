@@ -1,13 +1,13 @@
 import { useSocket } from '@gol-ya-pooch/frontend/hooks';
 import { convertToPersianNumbers } from '@gol-ya-pooch/frontend/utils';
-import { Events } from '@gol-ya-pooch/shared';
+import { Events, gameSize } from '@gol-ya-pooch/shared';
 import type { GameState } from '@gol-ya-pooch/shared';
 import clsx from 'clsx';
 import { KeyboardEvent, useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 
 export const CreateGameModal = () => {
-  const [gameSize, setGameSize] = useState<number>(2);
+  const [selectedGameSize, setSelectedGameSize] = useState<number>(2);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { emit, on, off } = useSocket();
@@ -28,7 +28,7 @@ export const CreateGameModal = () => {
   }, []);
 
   const handleSetGameSize = (size: number) => {
-    setGameSize(size);
+    setSelectedGameSize(size);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>, size: number) => {
@@ -42,7 +42,7 @@ export const CreateGameModal = () => {
     setIsLoading(true);
 
     emit(Events.CREATE_GAME_ROOM, {
-      gameSize,
+      selectedGameSize,
     });
   };
 
@@ -78,7 +78,7 @@ export const CreateGameModal = () => {
               بازی چند نفره بسازم برات؟
             </h3>
             <div className="my-8 inline-flex shrink-0 bg-secondary-50 rounded-full p-1">
-              {[2, 4, 6, 8].map((size) => (
+              {gameSize.map((size) => (
                 <span
                   key={size}
                   role="button"
@@ -86,7 +86,7 @@ export const CreateGameModal = () => {
                   onKeyDown={(event) => handleKeyDown(event, size)}
                   className={clsx(
                     'px-4 py-2 text-white rounded-full cursor-pointer transition-all duration-200',
-                    { 'bg-secondary': gameSize === size },
+                    { 'bg-secondary': selectedGameSize === size },
                   )}
                   onClick={() => handleSetGameSize(size)}
                 >

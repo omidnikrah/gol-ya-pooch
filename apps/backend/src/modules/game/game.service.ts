@@ -1,6 +1,7 @@
 import GameConfig from '@gol-ya-pooch/backend/config/game.config';
 import type {
   CoinSide,
+  GameSize,
   GameState,
   HandPosition,
   Player,
@@ -15,7 +16,7 @@ import { v4 as uuidV4 } from 'uuid';
 export class GameService {
   constructor(private readonly redisClient: Redis) {}
 
-  async findRoomWithFewestRemainingPlayers(gameSize: 2 | 4 | 6 | 8): Promise<{
+  async findRoomWithFewestRemainingPlayers(gameSize: GameSize): Promise<{
     room: GameState;
     teamName: TeamNames;
   }> {
@@ -65,7 +66,7 @@ export class GameService {
     return null;
   }
 
-  async createGameRoom(gameSize: GameState['gameSize']): Promise<GameState> {
+  async createGameRoom(gameSize: GameSize): Promise<GameState> {
     const gameId = uuidV4();
 
     const initialState: GameState = {
@@ -92,7 +93,7 @@ export class GameService {
   }
 
   async joinGameRoom(
-    gameSize: GameState['gameSize'],
+    gameSize: GameSize,
     playerName: Player['name'],
   ): Promise<{ gameState: GameState; playerData: Player }> {
     const gameData = await this.findRoomWithFewestRemainingPlayers(gameSize);
@@ -130,7 +131,7 @@ export class GameService {
   }
 
   async joinGameRoomWithId(
-    gameSize: GameState['gameSize'],
+    gameSize: GameSize,
     gameId: GameState['gameId'],
     teamName: TeamNames,
     playerName: Player['name'],

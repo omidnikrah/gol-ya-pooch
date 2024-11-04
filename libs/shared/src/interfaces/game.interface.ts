@@ -1,3 +1,5 @@
+import { gameSize } from '../constants';
+
 export type HandPosition = 'left' | 'right';
 export type TeamNames = 'teamA' | 'teamB';
 export type CoinSide = 'Head' | 'Tail';
@@ -14,10 +16,11 @@ export interface Team {
 
 type Teams = Record<TeamNames, Team>;
 type Scores = Record<TeamNames, number>;
+export type GameSize = (typeof gameSize)[number];
 
 export interface GameState {
   gameId: string;
-  gameSize: 2 | 4 | 6 | 8;
+  gameSize: GameSize;
   currentTurn: TeamNames;
   objectLocation: {
     hand: HandPosition;
