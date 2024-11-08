@@ -31,6 +31,7 @@ module.exports = {
         'primary-50': '#FF8181',
         'secondary-50': '#643890',
         'purple-white': '#DED1ED',
+        'purple-80': '#231B2F',
       },
       keyframes: {
         'move-top-left': {
