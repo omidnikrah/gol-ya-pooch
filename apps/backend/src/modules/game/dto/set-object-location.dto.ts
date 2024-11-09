@@ -6,7 +6,7 @@ export class SetObjectLocationDTO {
   gameId: GameState['gameId'];
 
   @IsString()
-  playerId: Player['playerId'];
+  playerId: Player['id'];
 
   @IsString()
   hand: HandPosition;
