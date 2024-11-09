@@ -265,6 +265,10 @@ export class GameService {
     return { gameState, isGameFinished };
   }
 
+  async getRoomInfo(gameId: GameState['gameId']): Promise<GameState> {
+    return await this.getGameState(gameId);
+  }
+
   async getAllGameRooms(): Promise<Record<string, GameState>> {
     const gameRoomIds = await this.redisClient.smembers('gameRooms');
     const gameRoomKeys = gameRoomIds.map((id) => `game:${id}`);

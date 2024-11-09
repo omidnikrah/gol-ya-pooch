@@ -1,4 +1,5 @@
 import { WsValidationExceptionFilter } from '@gol-ya-pooch/backend/common/filters/ws-exception.filter';
+import { GetRoomInfoDTO } from '@gol-ya-pooch/backend/modules/game/dto/get-room-info.dto';
 import { Events, GameState, Player } from '@gol-ya-pooch/shared';
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
@@ -134,5 +135,16 @@ export class GameGateway
     } else {
       this.server.to(gameId).emit(Events.GUESS_LOCATION_RESULT, gameState);
     }
+  }
+
+  @SubscribeMessage(Events.GET_ROOM_INFO)
+  async handleGetRoomInfo(
+    @MessageBody() data: GetRoomInfoDTO,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const { gameId } = data;
+    const gameState = await this.gameService.getRoomInfo(gameId);
+
+    client.emit(Events.ROOM_INFO_FETCHED, gameState);
   }
 }
