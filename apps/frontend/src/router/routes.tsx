@@ -6,7 +6,7 @@ export const AppRouter = () => {
   return (
     <Router>
       <Route path="/" component={HomePage} />
-      <Route path="/game/:roomId" component={GameRoomPage} />
+      <Route path="/game/:gameId" component={GameRoomPage} />
     </Router>
   );
 };
