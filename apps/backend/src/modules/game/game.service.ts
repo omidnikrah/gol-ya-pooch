@@ -123,6 +123,7 @@ export class GameService {
     const newPlayer = this.generatePlayer(playerName, playerId);
     team.members.push(newPlayer);
 
+    await this.redisClient.set(`player:${playerId}`, gameRoom.gameId);
     await this.redisClient.set(
       `game:${gameRoom.gameId}`,
       JSON.stringify(gameState),
@@ -275,6 +276,35 @@ export class GameService {
     delete gameState.objectLocation;
 
     return gameState;
+  }
+
+  async removePlayerFromGame(playerId: Player['id']): Promise<GameState> {
+    const gameId = await this.redisClient.get(`player:${playerId}`);
+    if (!gameId) return null;
+
+    const gameState = await this.getGameState(gameId);
+
+    let isPlayerRemoved = false;
+
+    for (const teamName of Object.keys(gameState.teams)) {
+      const team = gameState.teams[teamName];
+      const playerIndex = team.members.findIndex(
+        (player: Player) => player.id === playerId,
+      );
+
+      if (playerIndex !== -1) {
+        team.members.splice(playerIndex, 1);
+        isPlayerRemoved = true;
+        break;
+      }
+    }
+
+    if (isPlayerRemoved) {
+      await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
+      await this.redisClient.del(`player:${playerId}`);
+    }
+
+    return isPlayerRemoved ? gameState : null;
   }
 
   async getAllGameRooms(): Promise<Record<string, GameState>> {

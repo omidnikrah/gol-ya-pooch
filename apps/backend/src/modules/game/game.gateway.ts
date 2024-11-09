@@ -45,8 +45,17 @@ export class GameGateway
     console.log(`Client connected: ${client.id}`);
   }
 
-  handleDisconnect(client: Socket) {
+  async handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
+
+    const gameState = await this.gameService.removePlayerFromGame(client.id);
+
+    if (gameState) {
+      this.server.to(gameState.gameId).emit(Events.PLAYER_LEFT, {
+        playerId: client.id,
+        gameState,
+      });
+    }
   }
 
   @SubscribeMessage(Events.CREATE_GAME_ROOM)
