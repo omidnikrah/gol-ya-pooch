@@ -75,11 +75,13 @@ export class GameGateway
         gameId,
         team,
         playerName,
+        client.id,
       ));
     } else {
       ({ gameState, playerData } = await this.gameService.joinGameRoom(
         gameSize,
         playerName,
+        client.id,
       ));
     }
 

@@ -21,4 +21,6 @@ export const Events = {
 
   HAND_EMPTIED: 'game:player:handEmptied',
   PLAYER_JOINED: 'game:player:joined',
+
+  GAME_EXCEPTION: 'exception',
 };

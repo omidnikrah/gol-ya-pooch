@@ -5,7 +5,7 @@ export type TeamNames = 'teamA' | 'teamB';
 export type CoinSide = 'Head' | 'Tail';
 
 export interface Player {
-  playerId: string;
+  id: string;
   name?: string;
 }
 
@@ -24,7 +24,7 @@ export interface GameState {
   currentTurn: TeamNames;
   objectLocation: {
     hand: HandPosition;
-    playerId: Player['playerId'];
+    playerId: Player['id'];
   };
   round: number;
   scores: Scores;

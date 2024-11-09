@@ -95,6 +95,7 @@ export class GameService {
   async joinGameRoom(
     gameSize: GameSize,
     playerName: Player['name'],
+    playerId: Player['id'],
   ): Promise<{ gameState: GameState; playerData: Player }> {
     const gameData = await this.findRoomWithFewestRemainingPlayers(gameSize);
     let gameRoom: GameState;
@@ -119,7 +120,7 @@ export class GameService {
       );
     }
 
-    const newPlayer = this.generatePlayer(playerName);
+    const newPlayer = this.generatePlayer(playerName, playerId);
     team.members.push(newPlayer);
 
     await this.redisClient.set(
@@ -135,6 +136,7 @@ export class GameService {
     gameId: GameState['gameId'],
     teamName: TeamNames,
     playerName: Player['name'],
+    playerId: Player['id'],
   ): Promise<{ gameState: GameState; playerData: Player }> {
     const gameState = await this.getGameState(gameId);
     const maxTeamPlayers = gameSize / 2;
@@ -147,7 +149,7 @@ export class GameService {
       );
     }
 
-    const newPlayer = this.generatePlayer(playerName);
+    const newPlayer = this.generatePlayer(playerName, playerId);
     team.members.push(newPlayer);
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
@@ -198,7 +200,7 @@ export class GameService {
       playerId:
         teamMembers[
           Math.round(teamMembers.length === 1 ? 0 : teamMembers.length / 2)
-        ].playerId,
+        ].id,
     };
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
@@ -208,7 +210,7 @@ export class GameService {
 
   async changeObjectLocation(
     gameId: GameState['gameId'],
-    playerId: Player['playerId'],
+    playerId: Player['id'],
     hand: HandPosition,
   ): Promise<GameState> {
     await this.areTeamsReady(gameId);
@@ -227,7 +229,7 @@ export class GameService {
 
   async guessObjectLocation(
     gameId: GameState['gameId'],
-    playerId: Player['playerId'],
+    playerId: Player['id'],
     hand: HandPosition,
   ): Promise<{ gameState: GameState; isGameFinished: boolean }> {
     await this.areTeamsReady(gameId);
@@ -254,7 +256,7 @@ export class GameService {
         playerId:
           teamMembers[
             Math.round(teamMembers.length === 1 ? 0 : teamMembers.length / 2)
-          ].playerId,
+          ].id,
       };
     }
 
@@ -265,8 +267,14 @@ export class GameService {
     return { gameState, isGameFinished };
   }
 
-  async getRoomInfo(gameId: GameState['gameId']): Promise<GameState> {
-    return await this.getGameState(gameId);
+  async getRoomInfo(
+    gameId: GameState['gameId'],
+  ): Promise<Omit<GameState, 'objectLocation'>> {
+    const gameState = await this.getGameState(gameId);
+
+    delete gameState.objectLocation;
+
+    return gameState;
   }
 
   async getAllGameRooms(): Promise<Record<string, GameState>> {
@@ -302,9 +310,9 @@ export class GameService {
     return JSON.parse(gameData);
   }
 
-  generatePlayer(playerName: Player['name']) {
+  generatePlayer(playerName: Player['name'], playerId: Player['id']) {
     return {
-      playerId: uuidV4(),
+      id: playerId,
       name: playerName,
     };
   }

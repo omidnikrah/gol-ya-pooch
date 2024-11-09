@@ -1,6 +1,7 @@
+import { Events } from '@gol-ya-pooch/shared';
 import { Catch, ArgumentsHost, BadRequestException } from '@nestjs/common';
-import { Socket } from 'socket.io';
 import { BaseWsExceptionFilter } from '@nestjs/websockets';
+import { Socket } from 'socket.io';
 
 @Catch(BadRequestException)
 export class WsValidationExceptionFilter extends BaseWsExceptionFilter {
@@ -9,6 +10,6 @@ export class WsValidationExceptionFilter extends BaseWsExceptionFilter {
     const client = ctx.getClient<Socket>();
 
     const response = exception.getResponse();
-    client.emit('exception', response);
+    client.emit(Events.GAME_EXCEPTION, response);
   }
 }
