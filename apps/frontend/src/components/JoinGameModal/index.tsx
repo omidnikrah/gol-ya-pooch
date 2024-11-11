@@ -17,7 +17,6 @@ export const JoinGameModal = () => {
       setIsLoading(false);
       if (roomData) {
         navigate(`/game/${roomData?.gameId}`);
-        console.log(roomData);
       }
     });
 
@@ -41,7 +40,7 @@ export const JoinGameModal = () => {
     setIsLoading(true);
 
     emit(Events.JOIN_GAME_ROOM, {
-      selectedGameSize,
+      gameSize: selectedGameSize,
     });
   };
 

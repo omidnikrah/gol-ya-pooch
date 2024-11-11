@@ -42,7 +42,7 @@ export const CreateGameModal = () => {
     setIsLoading(true);
 
     emit(Events.CREATE_GAME_ROOM, {
-      selectedGameSize,
+      gameSize: selectedGameSize,
     });
   };
 
