@@ -17,6 +17,8 @@
     "@nestjs/platform-express": "^10.0.2",
     "@nestjs/platform-socket.io": "^10.4.5",
     "@nestjs/websockets": "^10.4.5",
+    "@splinetool/react-spline": "^4.0.0",
+    "@splinetool/runtime": "^1.9.37",
     "axios": "^1.6.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",

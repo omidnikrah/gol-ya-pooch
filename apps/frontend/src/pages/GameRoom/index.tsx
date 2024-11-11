@@ -1,17 +1,41 @@
+import { useSocket } from '@gol-ya-pooch/frontend/hooks';
+import { Events } from '@gol-ya-pooch/shared';
+import { useEffect } from 'react';
+import { useParams } from 'wouter';
+
 import GameTableIcon from './assets/game-table.svg';
 import { Player } from './components';
 
 const GameRoomPage = () => {
+  const params = useParams();
+  const { on, emit, off, error } = useSocket();
+
+  useEffect(() => {
+    emit(Events.GET_ROOM_INFO, {
+      gameId: params.gameId,
+    });
+
+    on(Events.ROOM_INFO_FETCHED, (data) => {
+      console.log(data);
+    });
+
+    return () => {
+      off(Events.ROOM_INFO_FETCHED);
+    };
+  }, [params.gameId]);
+
+  console.log(error);
+
   return (
     <div className="flex justify-center">
-      <div className="flex justify-center relative max-w-[80%]">
-        <div className="w-[80%] h-20 absolute top-0 grid grid-cols-3 gap-10 overflow-hidden rotate-180">
+      <div className="flex justify-center relative max-w-[1000px]">
+        <div className="w-[80%] absolute top-0 grid grid-cols-3 gap-10 items-end rotate-180">
           <Player />
           <Player />
           <Player />
         </div>
         <GameTableIcon className="w-full h-auto" />
-        <div className="w-[90%] h-20 absolute bottom-0 grid grid-cols-3 gap-10 overflow-hidden">
+        <div className="w-[90%] absolute bottom-0 grid grid-cols-3 gap-10 items-end">
           <Player />
           <Player />
           <Player />
