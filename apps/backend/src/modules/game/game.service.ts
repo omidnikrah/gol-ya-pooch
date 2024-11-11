@@ -1,6 +1,7 @@
 import GameConfig from '@gol-ya-pooch/backend/config/game.config';
-import type {
+import {
   CoinSide,
+  GameInfo,
   GameSize,
   GameState,
   HandPosition,
@@ -268,9 +269,7 @@ export class GameService {
     return { gameState, isGameFinished };
   }
 
-  async getRoomInfo(
-    gameId: GameState['gameId'],
-  ): Promise<Omit<GameState, 'objectLocation'>> {
+  async getRoomInfo(gameId: GameState['gameId']): Promise<GameInfo> {
     const gameState = await this.getGameState(gameId);
 
     delete gameState.objectLocation;

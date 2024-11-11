@@ -30,3 +30,5 @@ export interface GameState {
   scores: Scores;
   teams: Teams;
 }
+
+export type GameInfo = Omit<GameState, 'objectLocation'>;
