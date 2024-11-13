@@ -1,4 +1,5 @@
 import { useSocket } from '@gol-ya-pooch/frontend/hooks';
+import { useGameStore } from '@gol-ya-pooch/frontend/stores';
 import { convertToPersianNumbers } from '@gol-ya-pooch/frontend/utils';
 import { Events, gameSize, type GameState } from '@gol-ya-pooch/shared';
 import clsx from 'clsx';
@@ -11,10 +12,12 @@ export const JoinGameModal = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { emit, on, off } = useSocket();
   const [, navigate] = useLocation();
+  const { setGameState } = useGameStore();
 
   useEffect(() => {
     on(Events.GAME_ROOM_JOINED, (roomData: GameState) => {
       setIsLoading(false);
+      setGameState(roomData);
       if (roomData) {
         navigate(`/game/${roomData?.gameId}`);
       }

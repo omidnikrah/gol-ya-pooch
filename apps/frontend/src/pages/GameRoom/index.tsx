@@ -1,4 +1,5 @@
 import { useSocket } from '@gol-ya-pooch/frontend/hooks';
+import { useGameStore } from '@gol-ya-pooch/frontend/stores';
 import { Events, GameInfo } from '@gol-ya-pooch/shared';
 import { useEffect, useState } from 'react';
 import { useParams } from 'wouter';
@@ -10,7 +11,10 @@ const GameRoomPage = () => {
   const params = useParams();
   const { on, emit, off, error } = useSocket();
   const [gameRoomData, setGameRoomData] = useState<GameInfo>();
+  const { gameState } = useGameStore();
   const gameSize = gameRoomData ? gameRoomData.gameSize / 2 : 0;
+
+  console.log(gameState);
 
   useEffect(() => {
     emit(Events.GET_ROOM_INFO, {
