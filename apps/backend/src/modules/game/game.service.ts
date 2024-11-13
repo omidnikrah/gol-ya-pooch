@@ -333,7 +333,10 @@ export class GameService {
   async getGameState(gameId: GameState['gameId']): Promise<GameState> {
     const gameData = await this.redisClient.get(`game:${gameId}`);
     if (!gameData) {
-      throw new WsException('Game not found');
+      throw new WsException({
+        type: 'game_not_found',
+        message: 'game does not exist',
+      });
     }
 
     return JSON.parse(gameData);

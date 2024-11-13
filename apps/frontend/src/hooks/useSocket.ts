@@ -2,15 +2,16 @@ import { socket } from '@gol-ya-pooch/frontend/services';
 import { Events } from '@gol-ya-pooch/shared';
 import { useEffect, useState } from 'react';
 
+type ExceptionError = { type: string; status?: string; message: string };
+
 export const useSocket = () => {
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<ExceptionError>();
 
   useEffect(() => {
     const handleConnect = () => setIsConnected(true);
     const handleDisconnect = () => setIsConnected(false);
-    const handleGameException = (err: { status: string; message: string }) =>
-      setError(err.message);
+    const handleGameException = (err: ExceptionError) => setError(err);
 
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);

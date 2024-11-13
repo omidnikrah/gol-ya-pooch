@@ -10,6 +10,7 @@ const GameRoomPage = () => {
   const params = useParams();
   const { on, emit, off, error } = useSocket();
   const [gameRoomData, setGameRoomData] = useState<GameInfo>();
+  const gameSize = gameRoomData ? gameRoomData.gameSize / 2 : 0;
 
   useEffect(() => {
     emit(Events.GET_ROOM_INFO, {
@@ -25,9 +26,13 @@ const GameRoomPage = () => {
     };
   }, [params.gameId]);
 
-  console.log(gameRoomData, error);
-
-  const gameSize = gameRoomData ? gameRoomData.gameSize / 2 : 0;
+  if (error && error.type === 'game_not_found') {
+    return (
+      <div className="text-center text-white text-2xl">
+        همچین بازی‌ای وجود نداره یا شایدم تموم شده! 🤷🏻‍♂️
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center">
