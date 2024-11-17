@@ -97,7 +97,10 @@ export class GameService {
     gameSize: GameSize,
     playerName: Player['name'],
     playerId: Player['id'],
-  ): Promise<{ gameState: GameState; playerData: Player }> {
+  ): Promise<{
+    gameState: GameState;
+    playerData: Player & { team: TeamNames };
+  }> {
     const gameData = await this.findRoomWithFewestRemainingPlayers(gameSize);
     let gameRoom: GameState;
     let teamName: TeamNames;
@@ -130,7 +133,10 @@ export class GameService {
       JSON.stringify(gameState),
     );
 
-    return { gameState: gameState, playerData: newPlayer };
+    return {
+      gameState: gameState,
+      playerData: { ...newPlayer, team: teamName },
+    };
   }
 
   async joinGameRoomWithId(
@@ -139,7 +145,10 @@ export class GameService {
     teamName: TeamNames,
     playerName: Player['name'],
     playerId: Player['id'],
-  ): Promise<{ gameState: GameState; playerData: Player }> {
+  ): Promise<{
+    gameState: GameState;
+    playerData: Player & { team: TeamNames };
+  }> {
     const gameState = await this.getGameState(gameId);
     const maxTeamPlayers = gameSize / 2;
 
@@ -156,7 +165,10 @@ export class GameService {
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 
-    return { gameState: gameState, playerData: newPlayer };
+    return {
+      gameState: gameState,
+      playerData: { ...newPlayer, team: teamName },
+    };
   }
 
   async readyTeam(
