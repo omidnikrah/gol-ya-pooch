@@ -8,6 +8,7 @@ export const Events = {
   GAME_FINISHED: 'game:room:finished',
   GET_ROOM_INFO: 'game:room:getInfo',
   ROOM_INFO_FETCHED: 'game:room:infoFetched',
+  GAME_STATE_UPDATED: 'game:room:stateUpdated',
 
   CHANGE_OBJECT_LOCATION: 'game:object:changeLocation',
   OBJECT_LOCATION_CHANGED: 'game:object:locationChanged',

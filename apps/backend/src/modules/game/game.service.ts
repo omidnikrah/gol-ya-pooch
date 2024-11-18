@@ -33,11 +33,12 @@ export class GameService {
     let teamWithSpace = null;
     let minRemainingPlayers = Infinity;
 
-    gameStates.forEach(([error, roomData]: [never, string]) => {
-      if (error) return;
-      const room: GameState = JSON.parse(roomData);
+    for (const [error, roomData] of gameStates) {
+      if (error) continue;
 
-      if (room.gameSize !== gameSize) return;
+      const room: GameState = JSON.parse(roomData as string);
+
+      if (room.gameSize !== gameSize) continue;
 
       const teamAPlayers = room.teams.teamA.members.length;
       const teamBPlayers = room.teams.teamB.members.length;
@@ -51,11 +52,13 @@ export class GameService {
 
         if (teamAPlayers < maxTeamPlayers) {
           teamWithSpace = 'teamA';
+          break;
         } else if (teamBPlayers < maxTeamPlayers) {
           teamWithSpace = 'teamB';
+          break;
         }
       }
-    });
+    }
 
     if (roomWithFewestRemainingPlayers && teamWithSpace) {
       return {
@@ -106,9 +109,11 @@ export class GameService {
     let teamName: TeamNames;
 
     if (gameData) {
+      console.log('------------------- join', gameData);
       gameRoom = gameData.room;
       teamName = gameData.teamName;
     } else {
+      console.log('------------------- create');
       gameRoom = await this.createGameRoom(gameSize);
       teamName = 'teamA';
     }
@@ -175,7 +180,10 @@ export class GameService {
     gameId: GameState['gameId'],
     playerId: Player['id'],
     teamName: TeamNames,
-  ): Promise<GameState> {
+  ): Promise<{
+    gameState: GameState;
+    playerData: Player;
+  }> {
     const gameState = await this.getGameState(gameId);
 
     const player = gameState.teams[teamName].members.find(
@@ -189,7 +197,7 @@ export class GameService {
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 
-    return gameState;
+    return { gameState, playerData: player };
   }
 
   async chooseStarterTeam(

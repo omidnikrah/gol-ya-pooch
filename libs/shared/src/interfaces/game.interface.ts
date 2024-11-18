@@ -10,6 +10,10 @@ export interface Player {
   isReady: boolean;
 }
 
+export interface PlayerWithTeam extends Player {
+  team: TeamNames;
+}
+
 export interface Team {
   members: Player[];
 }

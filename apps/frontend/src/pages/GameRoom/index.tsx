@@ -1,17 +1,18 @@
 import { useSocket } from '@gol-ya-pooch/frontend/hooks';
-import { useGameStore } from '@gol-ya-pooch/frontend/stores';
+import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import { Events, GameInfo, TeamNames } from '@gol-ya-pooch/shared';
 import { useEffect, useState } from 'react';
 import { useParams } from 'wouter';
 
 import GameTableIcon from './assets/game-table.svg';
-import { Team } from './components';
+import { ReadyButton, Team } from './components';
 
 const GameRoomPage = () => {
   const params = useParams();
   const { on, emit, off, error } = useSocket();
   const [gameRoomData, setGameRoomData] = useState<GameInfo>();
   const { gameState } = useGameStore();
+  const { player } = usePlayerStore();
   const gameSize = gameRoomData ? gameRoomData.gameSize / 2 : 0;
 
   console.log(gameState);
@@ -38,25 +39,28 @@ const GameRoomPage = () => {
     );
   }
 
-  const playerTeamName = 'teamB';
+  const playerTeamName = player?.team ?? 'teamA';
 
   return (
-    <div className="flex justify-center">
-      <div className="flex justify-center relative max-w-[1000px]">
-        {Object.entries(gameRoomData?.teams || {}).map(([name, team]) => {
-          return (
-            <Team
-              key={name}
-              teamName={name as TeamNames}
-              gameSize={gameSize}
-              members={team.members || []}
-              playerTeamName={playerTeamName}
-            />
-          );
-        })}
-        <GameTableIcon className="w-full h-auto" />
+    <>
+      <div className="flex justify-center">
+        <div className="flex justify-center relative max-w-[1000px]">
+          {Object.entries(gameRoomData?.teams || {}).map(([name, team]) => {
+            return (
+              <Team
+                key={name}
+                teamName={name as TeamNames}
+                gameSize={gameSize}
+                members={team.members || []}
+                playerTeamName={playerTeamName}
+              />
+            );
+          })}
+          <GameTableIcon className="w-full h-auto" />
+        </div>
       </div>
-    </div>
+      <ReadyButton />
+    </>
   );
 };
 

@@ -100,14 +100,20 @@ export class GameGateway
   }
 
   @SubscribeMessage(Events.PLAYER_READY)
-  async handleReadyPlayer(@MessageBody() data: ReadyTeamDTO) {
+  async handleReadyPlayer(
+    @MessageBody() data: ReadyTeamDTO,
+    @ConnectedSocket() client: Socket,
+  ) {
     const { gameId, playerId, team } = data;
-    const gameState = await this.gameService.readyPlayer(
+    const { gameState, playerData } = await this.gameService.readyPlayer(
       gameId,
       playerId,
       team,
     );
-    this.server.to(gameId).emit(Events.PLAYER_READY_CONFIRMED, gameState);
+
+    client.emit(Events.PLAYER_READY_CONFIRMED, { ...playerData, team });
+
+    this.server.to(gameId).emit(Events.GAME_STATE_UPDATED, gameState);
   }
 
   @SubscribeMessage(Events.GAME_COIN_FLIP)
