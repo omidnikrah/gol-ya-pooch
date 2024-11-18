@@ -1,7 +1,7 @@
 import { useSocket } from '@gol-ya-pooch/frontend/hooks';
-import { useGameStore } from '@gol-ya-pooch/frontend/stores';
+import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import { convertToPersianNumbers } from '@gol-ya-pooch/frontend/utils';
-import { Events, gameSize, type GameState } from '@gol-ya-pooch/shared';
+import { Events, gameSize, type GameState, Player } from '@gol-ya-pooch/shared';
 import clsx from 'clsx';
 import { KeyboardEvent, useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
@@ -13,6 +13,7 @@ export const JoinGameModal = () => {
   const { emit, on, off } = useSocket();
   const [, navigate] = useLocation();
   const { setGameState } = useGameStore();
+  const { setPlayerData } = usePlayerStore();
 
   useEffect(() => {
     on(Events.GAME_ROOM_JOINED, (roomData: GameState) => {
@@ -23,8 +24,13 @@ export const JoinGameModal = () => {
       }
     });
 
+    on(Events.PLAYER_JOINED, (player: Player) => {
+      setPlayerData(player);
+    });
+
     return () => {
       off(Events.GAME_ROOM_JOINED);
+      off(Events.PLAYER_JOINED);
     };
   }, []);
 
