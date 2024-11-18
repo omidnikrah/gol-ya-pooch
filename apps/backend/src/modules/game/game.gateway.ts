@@ -99,11 +99,15 @@ export class GameGateway
     this.server.to(gameState.gameId).emit(Events.GAME_ROOM_JOINED, gameState);
   }
 
-  @SubscribeMessage(Events.TEAM_READY)
-  async handleReadyTeam(@MessageBody() data: ReadyTeamDTO) {
-    const { gameId, team } = data;
-    const gameState = await this.gameService.readyTeam(gameId, team);
-    this.server.to(gameId).emit(Events.TEAM_READY_CONFIRMED, gameState);
+  @SubscribeMessage(Events.PLAYER_READY)
+  async handleReadyPlayer(@MessageBody() data: ReadyTeamDTO) {
+    const { gameId, playerId, team } = data;
+    const gameState = await this.gameService.readyPlayer(
+      gameId,
+      playerId,
+      team,
+    );
+    this.server.to(gameId).emit(Events.PLAYER_READY_CONFIRMED, gameState);
   }
 
   @SubscribeMessage(Events.GAME_COIN_FLIP)
@@ -114,7 +118,7 @@ export class GameGateway
       team,
       coinSide,
     );
-    this.server.to(gameId).emit(Events.TEAM_READY_CONFIRMED, gameState);
+    this.server.to(gameId).emit(Events.GAME_COIN_FLIP_RESULT, gameState);
   }
 
   @SubscribeMessage(Events.CHANGE_OBJECT_LOCATION)

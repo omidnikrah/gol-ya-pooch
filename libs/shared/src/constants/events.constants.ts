@@ -14,14 +14,13 @@ export const Events = {
   GUESS_OBJECT_LOCATION: 'game:object:guessLocation',
   GUESS_LOCATION_RESULT: 'game:object:guessResult',
 
-  TEAM_READY: 'game:team:ready',
-  TEAM_READY_CONFIRMED: 'game:team:readyConfirmed',
-
   REQUEST_EMPTY_HAND: 'game:opponent:requestEmptyHand',
 
   HAND_EMPTIED: 'game:player:handEmptied',
   PLAYER_JOINED: 'game:player:joined',
   PLAYER_LEFT: 'game:player:left',
+  PLAYER_READY: 'game:player:ready',
+  PLAYER_READY_CONFIRMED: 'game:player:readyConfirmed',
 
   GAME_EXCEPTION: 'exception',
 };

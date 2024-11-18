@@ -1,4 +1,4 @@
-import type { GameState, TeamNames } from '@gol-ya-pooch/shared';
+import type { GameState, Player, TeamNames } from '@gol-ya-pooch/shared';
 import { IsString } from 'class-validator';
 
 export class ReadyTeamDTO {
@@ -7,4 +7,7 @@ export class ReadyTeamDTO {
 
   @IsString()
   team: TeamNames;
+
+  @IsString()
+  playerId: Player['id'];
 }

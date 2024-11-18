@@ -7,10 +7,10 @@ export type CoinSide = 'Head' | 'Tail';
 export interface Player {
   id: string;
   name?: string;
+  isReady: boolean;
 }
 
 export interface Team {
-  isReady: boolean;
   members: Player[];
 }
 

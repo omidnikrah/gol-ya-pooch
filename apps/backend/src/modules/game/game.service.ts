@@ -81,8 +81,8 @@ export class GameService {
         teamB: 0,
       },
       teams: {
-        teamA: { isReady: false, members: [] },
-        teamB: { isReady: false, members: [] },
+        teamA: { members: [] },
+        teamB: { members: [] },
       },
     };
 
@@ -171,13 +171,21 @@ export class GameService {
     };
   }
 
-  async readyTeam(
+  async readyPlayer(
     gameId: GameState['gameId'],
+    playerId: Player['id'],
     teamName: TeamNames,
   ): Promise<GameState> {
     const gameState = await this.getGameState(gameId);
 
-    gameState.teams[teamName].isReady = true;
+    const player = gameState.teams[teamName].members.find(
+      (member) => member.id === playerId,
+    );
+    if (!player) {
+      throw new Error(`Player ${playerId} not found in team ${teamName}`);
+    }
+
+    player.isReady = true;
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 
@@ -334,8 +342,14 @@ export class GameService {
   async areTeamsReady(gameId: GameState['gameId']) {
     const gameState = await this.getGameState(gameId);
 
-    const areReady =
-      gameState.teams.teamA.isReady && gameState.teams.teamB.isReady;
+    const isTeamAReady = gameState.teams.teamA.members.every(
+      (player) => player.isReady,
+    );
+    const isTeamBReady = gameState.teams.teamA.members.every(
+      (player) => player.isReady,
+    );
+
+    const areReady = isTeamAReady && isTeamBReady;
 
     if (!areReady) throw new WsException('Teams are not ready!');
 
@@ -358,6 +372,7 @@ export class GameService {
     return {
       id: playerId,
       name: playerName,
+      isReady: false,
     };
   }
 }
