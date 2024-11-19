@@ -109,11 +109,9 @@ export class GameService {
     let teamName: TeamNames;
 
     if (gameData) {
-      console.log('------------------- join', gameData);
       gameRoom = gameData.room;
       teamName = gameData.teamName;
     } else {
-      console.log('------------------- create');
       gameRoom = await this.createGameRoom(gameSize);
       teamName = 'teamA';
     }

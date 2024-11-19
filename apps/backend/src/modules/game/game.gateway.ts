@@ -55,6 +55,9 @@ export class GameGateway
         playerId: client.id,
         gameState,
       });
+      this.server
+        .to(gameState.gameId)
+        .emit(Events.GAME_STATE_UPDATED, gameState);
     }
   }
 
@@ -97,6 +100,7 @@ export class GameGateway
     client.join(gameState.gameId);
     client.emit(Events.PLAYER_JOINED, playerData);
     this.server.to(gameState.gameId).emit(Events.GAME_ROOM_JOINED, gameState);
+    this.server.to(gameState.gameId).emit(Events.GAME_STATE_UPDATED, gameState);
   }
 
   @SubscribeMessage(Events.PLAYER_READY)
