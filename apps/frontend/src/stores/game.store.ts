@@ -1,14 +1,15 @@
-import { GameState } from '@gol-ya-pooch/shared';
+import { GameInfo, GameState } from '@gol-ya-pooch/shared';
 import { create } from 'zustand';
 
 interface GameStore {
-  gameState: GameState | null;
+  gameState: GameState | GameInfo | null;
 
-  setGameState: (state: GameState) => void;
+  setGameState: (state: GameState | GameInfo) => void;
 }
 
 export const useGameStore = create<GameStore>()((set) => ({
   gameState: null,
 
-  setGameState: (data: GameState) => set(() => ({ gameState: data })),
+  setGameState: (data: GameState | GameInfo) =>
+    set(() => ({ gameState: data })),
 }));

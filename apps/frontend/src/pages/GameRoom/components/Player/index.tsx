@@ -10,6 +10,8 @@ interface IPlayer {
 }
 
 export const Player = ({ team, data, isJoined, position }: IPlayer) => {
+  console.log('player => ', data);
+
   return (
     <div
       className={clsx('w-full h-1/2 bg-purple-80 aspect-square relative flex', {
@@ -17,6 +19,19 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
         'rounded-br-full rounded-bl-full items-start': position === 'top',
       })}
     >
+      {data?.isReady && (
+        <span
+          className={clsx(
+            'absolute translate-x-1/2 right-1/2 bg-green-300 text-green-800 px-4 py-1 rounded-full',
+            {
+              'translate-y-14': position === 'bottom',
+              '-translate-y-14': position === 'top',
+            },
+          )}
+        >
+          آماده
+        </span>
+      )}
       {data?.name}
       {isJoined && (
         <Spline

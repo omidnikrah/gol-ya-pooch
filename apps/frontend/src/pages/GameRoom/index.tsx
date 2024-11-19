@@ -1,7 +1,7 @@
 import { useSocket } from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import { Events, GameInfo, TeamNames } from '@gol-ya-pooch/shared';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'wouter';
 
 import GameTableIcon from './assets/game-table.svg';
@@ -10,12 +10,9 @@ import { ReadyButton, Team } from './components';
 const GameRoomPage = () => {
   const params = useParams();
   const { on, emit, off, error } = useSocket();
-  const [gameRoomData, setGameRoomData] = useState<GameInfo>();
-  const { gameState } = useGameStore();
+  const { gameState, setGameState } = useGameStore();
   const { player } = usePlayerStore();
-  const gameSize = gameRoomData ? gameRoomData.gameSize / 2 : 0;
-
-  console.log(gameState);
+  const gameSize = gameState ? gameState.gameSize / 2 : 0;
 
   useEffect(() => {
     emit(Events.GET_ROOM_INFO, {
@@ -23,7 +20,7 @@ const GameRoomPage = () => {
     });
 
     on(Events.ROOM_INFO_FETCHED, (data: GameInfo) => {
-      setGameRoomData(data);
+      setGameState(data);
     });
 
     return () => {
@@ -45,7 +42,7 @@ const GameRoomPage = () => {
     <>
       <div className="flex justify-center">
         <div className="flex justify-center relative max-w-[1000px]">
-          {Object.entries(gameRoomData?.teams || {}).map(([name, team]) => {
+          {Object.entries(gameState?.teams || {}).map(([name, team]) => {
             return (
               <Team
                 key={name}
