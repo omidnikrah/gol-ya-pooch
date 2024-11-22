@@ -66,6 +66,11 @@ module.exports = {
             transform: 'translate(0, 0)',
           },
         },
+        flip: {
+          '0%': { transform: 'rotateY(0deg) scale(1)' },
+          '50%': { transform: 'rotateY(540deg) scale(2) translateY(-100%)' },
+          '100%': { transform: 'rotateY(1080deg) scale(1)' },
+        },
       },
       animation: {
         'move-top-left':
@@ -76,8 +81,29 @@ module.exports = {
           'move-bottom-left 2s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate',
         'move-bottom-right':
           'move-bottom-right 2s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate',
+        flip: 'flip 1s ease-in-out',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        '.perspective-1000': {
+          perspective: '1000px',
+        },
+        '.transform-3d': {
+          'transform-style': 'preserve-3d',
+        },
+        '.backface-hidden': {
+          'backface-visibility': 'hidden',
+        },
+        '.rotate-y-180': {
+          transform: 'rotateY(-180deg)',
+        },
+        '.rotate-y-0': {
+          transform: 'rotateY(0deg)',
+        },
+      });
+    },
+  ],
 };

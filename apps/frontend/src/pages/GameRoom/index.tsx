@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useParams } from 'wouter';
 
 import GameTableIcon from './assets/game-table.svg';
-import { ReadyButton, Team } from './components';
+import { CoinFlipScene, ReadyButton, Team } from './components';
 
 const GameRoomPage = () => {
   const params = useParams();
@@ -57,6 +57,7 @@ const GameRoomPage = () => {
         </div>
       </div>
       <ReadyButton />
+      <CoinFlipScene />
     </>
   );
 };
