@@ -1,6 +1,5 @@
 import GameConfig from '@gol-ya-pooch/backend/config/game.config';
 import {
-  CoinSide,
   GameInfo,
   GameSize,
   GameState,
@@ -39,6 +38,7 @@ export class GameService {
       const room: GameState = JSON.parse(roomData as string);
 
       if (room.gameSize !== gameSize) continue;
+      if (room.currentTurn) continue; // Which means the game has started
 
       const teamAPlayers = room.teams.teamA.members.length;
       const teamBPlayers = room.teams.teamB.members.length;
@@ -198,11 +198,7 @@ export class GameService {
     return { gameState, playerData: player };
   }
 
-  async chooseStarterTeam(
-    gameId: GameState['gameId'],
-    teamName: TeamNames,
-    coinSide: CoinSide,
-  ): Promise<GameState> {
+  async chooseStarterTeam(gameId: GameState['gameId']): Promise<GameState> {
     await this.areTeamsReady(gameId);
 
     const gameState = await this.getGameState(gameId);
@@ -213,13 +209,7 @@ export class GameService {
       );
     }
 
-    const coinResult = Math.random() < 0.5 ? 'Head' : 'Tail';
-
-    if (coinResult === coinSide) {
-      gameState.currentTurn = teamName;
-    } else {
-      gameState.currentTurn = teamName === 'teamA' ? 'teamB' : 'teamA';
-    }
+    gameState.currentTurn = Math.random() < 0.5 ? 'teamA' : 'teamB';
 
     const teamMembers = gameState.teams[gameState.currentTurn].members;
 

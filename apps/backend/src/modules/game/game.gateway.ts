@@ -122,12 +122,8 @@ export class GameGateway
 
   @SubscribeMessage(Events.GAME_COIN_FLIP)
   async handleChooseStarterTeam(@MessageBody() data: CoinFlipDTO) {
-    const { gameId, team, coinSide } = data;
-    const gameState = await this.gameService.chooseStarterTeam(
-      gameId,
-      team,
-      coinSide,
-    );
+    const { gameId } = data;
+    const gameState = await this.gameService.chooseStarterTeam(gameId);
     this.server.to(gameId).emit(Events.GAME_COIN_FLIP_RESULT, gameState);
   }
 
