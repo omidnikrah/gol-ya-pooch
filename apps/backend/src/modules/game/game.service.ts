@@ -1,10 +1,10 @@
 import GameConfig from '@gol-ya-pooch/backend/config/game.config';
 import {
-  GameInfo,
   GameSize,
   GameState,
   HandPosition,
   Player,
+  PublicGameState,
   TeamNames,
 } from '@gol-ya-pooch/shared';
 import { Injectable } from '@nestjs/common';
@@ -70,7 +70,7 @@ export class GameService {
     return null;
   }
 
-  async createGameRoom(gameSize: GameSize): Promise<GameState> {
+  async createGameRoom(gameSize: GameSize): Promise<PublicGameState> {
     const gameId = uuidV4();
 
     const initialState: GameState = {
@@ -93,7 +93,7 @@ export class GameService {
 
     await this.redisClient.sadd('gameRooms', gameId);
 
-    return initialState;
+    return this.serializeGameState(initialState);
   }
 
   async joinGameRoom(
@@ -101,11 +101,11 @@ export class GameService {
     playerName: Player['name'],
     playerId: Player['id'],
   ): Promise<{
-    gameState: GameState;
+    gameState: PublicGameState;
     playerData: Player & { team: TeamNames };
   }> {
     const gameData = await this.findRoomWithFewestRemainingPlayers(gameSize);
-    let gameRoom: GameState;
+    let gameRoom: PublicGameState;
     let teamName: TeamNames;
 
     if (gameData) {
@@ -137,7 +137,7 @@ export class GameService {
     );
 
     return {
-      gameState: gameState,
+      gameState: this.serializeGameState(gameState),
       playerData: { ...newPlayer, team: teamName },
     };
   }
@@ -149,7 +149,7 @@ export class GameService {
     playerName: Player['name'],
     playerId: Player['id'],
   ): Promise<{
-    gameState: GameState;
+    gameState: PublicGameState;
     playerData: Player & { team: TeamNames };
   }> {
     const gameState = await this.getGameState(gameId);
@@ -169,7 +169,7 @@ export class GameService {
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 
     return {
-      gameState: gameState,
+      gameState: this.serializeGameState(gameState),
       playerData: { ...newPlayer, team: teamName },
     };
   }
@@ -179,7 +179,7 @@ export class GameService {
     playerId: Player['id'],
     teamName: TeamNames,
   ): Promise<{
-    gameState: GameState;
+    gameState: PublicGameState;
     playerData: Player;
   }> {
     const gameState = await this.getGameState(gameId);
@@ -195,10 +195,15 @@ export class GameService {
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 
-    return { gameState, playerData: player };
+    return {
+      gameState: this.serializeGameState(gameState),
+      playerData: player,
+    };
   }
 
-  async chooseStarterTeam(gameId: GameState['gameId']): Promise<GameState> {
+  async chooseStarterTeam(
+    gameId: GameState['gameId'],
+  ): Promise<PublicGameState> {
     await this.areTeamsReady(gameId);
 
     const gameState = await this.getGameState(gameId);
@@ -223,14 +228,14 @@ export class GameService {
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 
-    return gameState;
+    return this.serializeGameState(gameState);
   }
 
   async changeObjectLocation(
     gameId: GameState['gameId'],
     playerId: Player['id'],
     hand: HandPosition,
-  ): Promise<GameState> {
+  ): Promise<PublicGameState> {
     await this.areTeamsReady(gameId);
 
     const gameState = await this.getGameState(gameId);
@@ -242,14 +247,14 @@ export class GameService {
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 
-    return gameState;
+    return this.serializeGameState(gameState);
   }
 
   async guessObjectLocation(
     gameId: GameState['gameId'],
     playerId: Player['id'],
     hand: HandPosition,
-  ): Promise<{ gameState: GameState; isGameFinished: boolean }> {
+  ): Promise<{ gameState: PublicGameState; isGameFinished: boolean }> {
     await this.areTeamsReady(gameId);
 
     const gameState = await this.getGameState(gameId);
@@ -282,18 +287,16 @@ export class GameService {
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 
-    return { gameState, isGameFinished };
+    return { gameState: this.serializeGameState(gameState), isGameFinished };
   }
 
-  async getRoomInfo(gameId: GameState['gameId']): Promise<GameInfo> {
+  async getRoomInfo(gameId: GameState['gameId']): Promise<PublicGameState> {
     const gameState = await this.getGameState(gameId);
 
-    delete gameState.objectLocation;
-
-    return gameState;
+    return this.serializeGameState(gameState);
   }
 
-  async removePlayerFromGame(playerId: Player['id']): Promise<GameState> {
+  async removePlayerFromGame(playerId: Player['id']): Promise<PublicGameState> {
     const gameId = await this.redisClient.get(`player:${playerId}`);
     if (!gameId) return null;
 
@@ -319,7 +322,7 @@ export class GameService {
       await this.redisClient.del(`player:${playerId}`);
     }
 
-    return isPlayerRemoved ? gameState : null;
+    return isPlayerRemoved ? this.serializeGameState(gameState) : null;
   }
 
   async getAllGameRooms(): Promise<Record<string, GameState>> {
@@ -370,5 +373,13 @@ export class GameService {
       name: playerName,
       isReady: false,
     };
+  }
+
+  private serializeGameState(gameState: GameState): PublicGameState {
+    const clonedGameState = { ...gameState };
+
+    delete clonedGameState.objectLocation;
+
+    return clonedGameState;
   }
 }

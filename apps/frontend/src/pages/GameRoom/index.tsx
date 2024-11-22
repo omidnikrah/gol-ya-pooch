@@ -1,6 +1,6 @@
 import { useSocket } from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
-import { Events, GameInfo, TeamNames } from '@gol-ya-pooch/shared';
+import { Events, PublicGameState, TeamNames } from '@gol-ya-pooch/shared';
 import { useEffect } from 'react';
 import { useParams } from 'wouter';
 
@@ -19,7 +19,7 @@ const GameRoomPage = () => {
       gameId: params.gameId,
     });
 
-    on(Events.ROOM_INFO_FETCHED, (data: GameInfo) => {
+    on(Events.ROOM_INFO_FETCHED, (data: PublicGameState) => {
       setGameState(data);
     });
 

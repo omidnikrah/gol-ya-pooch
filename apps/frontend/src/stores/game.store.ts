@@ -1,13 +1,13 @@
 import { GamePhases } from '@gol-ya-pooch/frontend/enums';
-import { GameInfo, GameState } from '@gol-ya-pooch/shared';
+import { PublicGameState } from '@gol-ya-pooch/shared';
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
 interface GameStore {
-  gameState: GameState | GameInfo | null;
+  gameState: PublicGameState | null;
   phase: GamePhases;
 
-  setGameState: (state: GameState | GameInfo) => void;
+  setGameState: (state: PublicGameState) => void;
   setGamePhase: (phase: GamePhases) => void;
 }
 
@@ -16,8 +16,7 @@ export const useGameStore = create(
     gameState: null,
     phase: GamePhases.WAITING_FOR_PLAYERS,
 
-    setGameState: (data: GameState | GameInfo) =>
-      set(() => ({ gameState: data })),
+    setGameState: (data: PublicGameState) => set(() => ({ gameState: data })),
     setGamePhase: (phase: GamePhases) => set(() => ({ phase: phase })),
   })),
 );

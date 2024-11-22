@@ -35,4 +35,4 @@ export interface GameState {
   teams: Teams;
 }
 
-export type GameInfo = Omit<GameState, 'objectLocation'>;
+export type PublicGameState = Omit<GameState, 'objectLocation'>;
