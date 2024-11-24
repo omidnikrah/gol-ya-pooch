@@ -1,5 +1,7 @@
 import { WsValidationExceptionFilter } from '@gol-ya-pooch/backend/common/filters/ws-exception.filter';
 import { GetRoomInfoDTO } from '@gol-ya-pooch/backend/modules/game/dto/get-room-info.dto';
+import { PlayerPlayingDTO } from '@gol-ya-pooch/backend/modules/game/dto/player-playing.dto';
+import { RequestEmptyPlayDTO } from '@gol-ya-pooch/backend/modules/game/dto/request-empty-play.dto';
 import { Events, Player, PublicGameState } from '@gol-ya-pooch/shared';
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
@@ -138,6 +140,12 @@ export class GameGateway
     this.server.to(gameId).emit(Events.OBJECT_LOCATION_CHANGED, gameState);
   }
 
+  @SubscribeMessage(Events.PLAYER_PLAYING)
+  async handlePlayerPlaying(@MessageBody() data: PlayerPlayingDTO) {
+    const { gameId, playerId } = data;
+    this.server.to(gameId).emit(Events.PLAYER_PLAYING, playerId);
+  }
+
   @SubscribeMessage(Events.GUESS_OBJECT_LOCATION)
   async handleGuessObjectLocation(@MessageBody() data: GuessObjectLocationDTO) {
     const { gameId, playerId, hand } = data;
@@ -167,5 +175,11 @@ export class GameGateway
     const gameState = await this.gameService.getRoomInfo(gameId);
 
     client.emit(Events.ROOM_INFO_FETCHED, gameState);
+  }
+
+  @SubscribeMessage(Events.REQUEST_EMPTY_PLAY)
+  async handleRequestEmptyPlay(@MessageBody() data: RequestEmptyPlayDTO) {
+    const { gameId, playerId } = data;
+    this.server.to(gameId).emit(Events.REQUEST_EMPTY_PLAY, playerId);
   }
 }

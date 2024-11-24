@@ -1,6 +1,11 @@
-import { useSocket } from '@gol-ya-pooch/frontend/hooks';
+import { useGameControls, useSocket } from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
-import { Events, PublicGameState, TeamNames } from '@gol-ya-pooch/shared';
+import {
+  Events,
+  Player,
+  PublicGameState,
+  TeamNames,
+} from '@gol-ya-pooch/shared';
 import { useEffect } from 'react';
 import { useParams } from 'wouter';
 
@@ -10,9 +15,15 @@ import { CoinFlipScene, ReadyButton, Team } from './components';
 const GameRoomPage = () => {
   const params = useParams();
   const { on, emit, off, error } = useSocket();
-  const { gameState, setGameState } = useGameStore();
+  const {
+    gameState,
+    setGameState,
+    setPlayingPlayerId,
+    setRequestedPlayerIdToEmptyPlay,
+  } = useGameStore();
   const { player } = usePlayerStore();
   const gameSize = gameState ? gameState.gameSize / 2 : 0;
+  useGameControls();
 
   useEffect(() => {
     emit(Events.GET_ROOM_INFO, {
@@ -23,8 +34,18 @@ const GameRoomPage = () => {
       setGameState(data);
     });
 
+    on(Events.REQUEST_EMPTY_PLAY, (playerId: Player['id']) => {
+      setRequestedPlayerIdToEmptyPlay(playerId);
+    });
+
+    on(Events.PLAYER_PLAYING, (playerId: Player['id']) => {
+      setPlayingPlayerId(playerId);
+    });
+
     return () => {
       off(Events.ROOM_INFO_FETCHED);
+      off(Events.REQUEST_EMPTY_PLAY);
+      off(Events.PLAYER_PLAYING);
     };
   }, [params.gameId]);
 

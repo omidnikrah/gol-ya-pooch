@@ -1,23 +1,33 @@
 import { GamePhases } from '@gol-ya-pooch/frontend/enums';
-import { PublicGameState } from '@gol-ya-pooch/shared';
+import { Player, PublicGameState } from '@gol-ya-pooch/shared';
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
 interface GameStore {
   gameState: PublicGameState | null;
   phase: GamePhases;
+  playingPlayerId: Player['id'] | null;
+  requestedPlayerIdToEmptyPlay: Player['id'] | null;
 
   setGameState: (state: PublicGameState) => void;
   setGamePhase: (phase: GamePhases) => void;
+  setPlayingPlayerId: (playerId: Player['id'] | null) => void;
+  setRequestedPlayerIdToEmptyPlay: (playerId: Player['id'] | null) => void;
 }
 
 export const useGameStore = create(
   subscribeWithSelector<GameStore>((set) => ({
     gameState: null,
     phase: GamePhases.WAITING_FOR_PLAYERS,
+    playingPlayerId: null,
+    requestedPlayerIdToEmptyPlay: null,
 
-    setGameState: (data: PublicGameState) => set(() => ({ gameState: data })),
-    setGamePhase: (phase: GamePhases) => set(() => ({ phase: phase })),
+    setGameState: (data) => set(() => ({ gameState: data })),
+    setGamePhase: (phase) => set(() => ({ phase: phase })),
+    setPlayingPlayerId: (playerId) =>
+      set(() => ({ playingPlayerId: playerId })),
+    setRequestedPlayerIdToEmptyPlay: (playerId) =>
+      set(() => ({ requestedPlayerIdToEmptyPlay: playerId })),
   })),
 );
 
@@ -30,7 +40,8 @@ useGameStore.subscribe(
     const teamALength = gameTeams.teamA.members.length;
     const teamBLength = gameTeams.teamB.members.length;
 
-    if (teamALength + teamBLength < gameState.gameSize) return;
+    if (teamALength + teamBLength < gameState.gameSize || gameState.currentTurn)
+      return;
 
     const isTeamAReady = gameTeams.teamA.members.every(
       (player) => player.isReady,
@@ -43,6 +54,18 @@ useGameStore.subscribe(
       useGameStore.getState().setGamePhase(GamePhases.FLIPPING_COIN);
     } else {
       useGameStore.getState().setGamePhase(GamePhases.WAITING_FOR_READY);
+    }
+  },
+);
+
+useGameStore.subscribe(
+  (state) => state.playingPlayerId,
+  (playingPlayerId) => {
+    if (playingPlayerId) {
+      setTimeout(() => {
+        useGameStore.getState().setPlayingPlayerId(null);
+        useGameStore.getState().setRequestedPlayerIdToEmptyPlay(null);
+      }, 3000);
     }
   },
 );
