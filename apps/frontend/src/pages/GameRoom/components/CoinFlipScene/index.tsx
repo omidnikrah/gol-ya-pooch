@@ -23,7 +23,7 @@ export const CoinFlipScene = () => {
   const { emit, on, off } = useSocket();
 
   useEffect(() => {
-    if (phase === GamePhases.COIN_FLIP) {
+    if (phase === GamePhases.FLIPPING_COIN) {
       emit(Events.GAME_COIN_FLIP, {
         gameId: gameState?.gameId,
       });
@@ -42,7 +42,7 @@ export const CoinFlipScene = () => {
 
   return (
     <AnimatePresence>
-      {phase === GamePhases.COIN_FLIP && (
+      {phase === GamePhases.FLIPPING_COIN && (
         <motion.div
           exit={{ opacity: 0 }}
           initial={{ opacity: 0 }}

@@ -40,7 +40,7 @@ useGameStore.subscribe(
     );
 
     if (isTeamAReady && isTeamBReady) {
-      useGameStore.getState().setGamePhase(GamePhases.COIN_FLIP);
+      useGameStore.getState().setGamePhase(GamePhases.FLIPPING_COIN);
     }
   },
 );
