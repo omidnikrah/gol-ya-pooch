@@ -41,6 +41,8 @@ useGameStore.subscribe(
 
     if (isTeamAReady && isTeamBReady) {
       useGameStore.getState().setGamePhase(GamePhases.FLIPPING_COIN);
+    } else {
+      useGameStore.getState().setGamePhase(GamePhases.WAITING_FOR_READY);
     }
   },
 );
