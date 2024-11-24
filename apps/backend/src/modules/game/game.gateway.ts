@@ -1,6 +1,6 @@
 import { WsValidationExceptionFilter } from '@gol-ya-pooch/backend/common/filters/ws-exception.filter';
 import { GetRoomInfoDTO } from '@gol-ya-pooch/backend/modules/game/dto/get-room-info.dto';
-import { Events, GameState, Player } from '@gol-ya-pooch/shared';
+import { Events, Player, PublicGameState } from '@gol-ya-pooch/shared';
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   WebSocketGateway,
@@ -79,7 +79,7 @@ export class GameGateway
   ) {
     const { gameSize, gameId, team, playerName } = data;
 
-    let gameState: GameState, playerData: Player;
+    let gameState: PublicGameState, playerData: Player;
 
     if (gameId && team) {
       ({ gameState, playerData } = await this.gameService.joinGameRoomWithId(
