@@ -1,10 +1,10 @@
 import { useSocket } from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
-import { Events, GameState, PlayerWithTeam } from '@gol-ya-pooch/shared';
+import { Events, PlayerWithTeam } from '@gol-ya-pooch/shared';
 import { useEffect } from 'react';
 
 export const ReadyButton = () => {
-  const { gameState, setGameState } = useGameStore();
+  const { gameState } = useGameStore();
   const { player, setPlayerData } = usePlayerStore();
   const { emit, on, off } = useSocket();
 
@@ -13,13 +13,8 @@ export const ReadyButton = () => {
       setPlayerData(playerData);
     });
 
-    on(Events.GAME_STATE_UPDATED, (data: GameState) => {
-      setGameState(data);
-    });
-
     return () => {
       off(Events.PLAYER_READY_CONFIRMED);
-      off(Events.GAME_STATE_UPDATED);
     };
   }, []);
 

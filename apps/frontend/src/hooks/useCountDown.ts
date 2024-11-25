@@ -3,9 +3,14 @@ import { useState, useEffect } from 'react';
 interface UseCountdownOptions {
   from: number;
   onComplete?: () => void;
+  enable: boolean;
 }
 
-export const useCountdown = ({ from, onComplete }: UseCountdownOptions) => {
+export const useCountdown = ({
+  from,
+  onComplete,
+  enable,
+}: UseCountdownOptions) => {
   const [count, setCount] = useState(from);
 
   useEffect(() => {
@@ -14,12 +19,14 @@ export const useCountdown = ({ from, onComplete }: UseCountdownOptions) => {
       return;
     }
 
-    const timer = setTimeout(() => {
-      setCount((prev) => prev - 1);
-    }, 1000);
+    if (enable) {
+      const timer = setTimeout(() => {
+        setCount((prev) => prev - 1);
+      }, 1000);
 
-    return () => clearTimeout(timer);
-  }, [count, onComplete]);
+      return () => clearTimeout(timer);
+    }
+  }, [count, onComplete, enable]);
 
   return count;
 };

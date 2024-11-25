@@ -1,3 +1,4 @@
+import { GamePhases } from '@gol-ya-pooch/frontend/enums';
 import { useGameControls, useSocket } from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import {
@@ -16,6 +17,7 @@ const GameRoomPage = () => {
   const params = useParams();
   const { on, emit, off, error } = useSocket();
   const {
+    phase,
     gameState,
     setGameState,
     setPlayingPlayerId,
@@ -77,8 +79,8 @@ const GameRoomPage = () => {
           <GameTableIcon className="w-full h-auto" />
         </div>
       </div>
-      <ReadyButton />
-      <CoinFlipScene />
+      {phase === GamePhases.WAITING_FOR_READY && <ReadyButton />}
+      {phase === GamePhases.FLIPPING_COIN && <CoinFlipScene />}
     </>
   );
 };

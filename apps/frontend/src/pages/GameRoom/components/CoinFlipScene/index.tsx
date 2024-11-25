@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 
 import { Coin } from '..';
 
-const STARTING_TURN_MESSAGE_TIMEOUT = 3000;
+const STARTING_TURN_MESSAGE_TIMEOUT = 7000;
 const TRANSITION_CONFIG = {
   type: 'spring',
   damping: 32,
@@ -16,14 +16,15 @@ const TRANSITION_CONFIG = {
 };
 
 export const CoinFlipScene = () => {
+  const { gameState, phase, setGameState, setGamePhase } = useGameStore();
   const countdown = useCountdown({
     from: 3,
+    enable: phase === GamePhases.FLIPPING_COIN,
   });
-  const { gameState, phase, setGameState, setGamePhase } = useGameStore();
   const { emit, on, off } = useSocket();
 
   useEffect(() => {
-    if (phase === GamePhases.FLIPPING_COIN) {
+    if (phase === GamePhases.FLIPPING_COIN && !gameState?.currentTurn) {
       emit(Events.GAME_COIN_FLIP, {
         gameId: gameState?.gameId,
       });
@@ -38,50 +39,48 @@ export const CoinFlipScene = () => {
         off(Events.GAME_COIN_FLIP_RESULT);
       };
     }
-  }, [gameState, phase]);
+  }, [gameState?.gameId, phase]);
 
   return (
     <AnimatePresence>
-      {phase === GamePhases.FLIPPING_COIN && (
-        <motion.div
-          exit={{ opacity: 0 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={TRANSITION_CONFIG}
-          className="fixed inset-0 bg-purple-80 bg-opacity-90 flex items-center justify-center"
-        >
-          {countdown > 0 && (
-            <AnimatePresence>
-              <motion.h1
-                key={countdown}
-                exit={{ opacity: 0, scale: 3.5, position: 'absolute' }}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-6xl text-white"
-                transition={TRANSITION_CONFIG}
-              >
-                {convertToPersianNumbers(countdown)}
-              </motion.h1>
-            </AnimatePresence>
-          )}
-          {countdown === 0 && <Coin />}
-          {countdown === 0 && gameState?.currentTurn && (
-            <AnimatePresence>
-              <motion.h2
-                exit={{ opacity: 0, scale: 3.5, position: 'absolute' }}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-4xl text-white"
-                transition={TRANSITION_CONFIG}
-              >
-                {gameState?.currentTurn === 'teamA'
-                  ? 'تیم آبی بازی رو شروع میکنه'
-                  : 'تیم قرمز بازی رو شروع میکنه'}
-              </motion.h2>
-            </AnimatePresence>
-          )}
-        </motion.div>
-      )}
+      <motion.div
+        exit={{ opacity: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={TRANSITION_CONFIG}
+        className="fixed inset-0 bg-purple-80 bg-opacity-90 flex items-center justify-center"
+      >
+        {countdown > 0 && (
+          <AnimatePresence>
+            <motion.h1
+              key={countdown}
+              exit={{ opacity: 0, scale: 3.5, position: 'absolute' }}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-6xl text-white"
+              transition={TRANSITION_CONFIG}
+            >
+              {convertToPersianNumbers(countdown)}
+            </motion.h1>
+          </AnimatePresence>
+        )}
+        {countdown === 0 && <Coin />}
+        {countdown === 0 && gameState?.currentTurn && (
+          <AnimatePresence>
+            <motion.h2
+              exit={{ opacity: 0, scale: 3.5, position: 'absolute' }}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-4xl text-white"
+              transition={TRANSITION_CONFIG}
+            >
+              {gameState?.currentTurn === 'teamA'
+                ? 'تیم آبی بازی رو شروع میکنه'
+                : 'تیم قرمز بازی رو شروع میکنه'}
+            </motion.h2>
+          </AnimatePresence>
+        )}
+      </motion.div>
     </AnimatePresence>
   );
 };
