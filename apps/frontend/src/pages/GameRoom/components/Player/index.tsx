@@ -3,6 +3,7 @@ import { useGameStore } from '@gol-ya-pooch/frontend/stores';
 import { Player as IPlayerData, TeamNames } from '@gol-ya-pooch/shared';
 import Spline from '@splinetool/react-spline';
 import clsx from 'clsx';
+import { useMemo } from 'react';
 
 interface IPlayer {
   team: TeamNames;
@@ -22,6 +23,12 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
       requestEmptyPlay(data?.id);
     }
   };
+
+  const splineFilePath = useMemo(() => {
+    const shouldHandsOpen =
+      !gameState?.currentTurn || team !== gameState?.currentTurn;
+    return `/models/${team === 'teamA' ? 'blue' : 'red'}-${position}-team-hands${isPlaying ? '-playing' : ''}${shouldHandsOpen ? '-open' : ''}.splinecode`;
+  }, [team, position, isPlaying, gameState]);
 
   return (
     <div
@@ -49,7 +56,7 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
       {data?.name}
       {isJoined && (
         <Spline
-          scene={`/models/${team === 'teamA' ? 'blue' : 'red'}-${position}-team-hands${isPlaying ? '-playing' : ''}.splinecode`}
+          scene={splineFilePath}
           className={clsx('absolute flex justify-center !h-[120px]', {
             'translate-y-6': position === 'bottom',
             '-translate-y-6': position === 'top',
