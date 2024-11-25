@@ -5,7 +5,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { Toast } from '.';
 
 interface ToastContextType {
-  showToast: (message: string) => void;
+  showToast: (message: string, duration?: number) => void;
 }
 
 interface ToastData {
