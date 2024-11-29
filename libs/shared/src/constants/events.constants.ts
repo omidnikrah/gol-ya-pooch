@@ -24,6 +24,7 @@ export const Events = {
   PLAYER_READY: 'game:player:ready',
   PLAYER_READY_CONFIRMED: 'game:player:readyConfirmed',
   PLAYER_PLAYING: 'game:player:playing',
+  PLAYER_RECEIVE_OBJECT: 'game:player:receiveObject',
 
   GAME_EXCEPTION: 'exception',
 };

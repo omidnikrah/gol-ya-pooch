@@ -3,6 +3,7 @@ import {
   GameSize,
   GameState,
   HandPosition,
+  IObjectLocation,
   Player,
   PublicGameState,
   TeamNames,
@@ -201,9 +202,10 @@ export class GameService {
     };
   }
 
-  async chooseStarterTeam(
-    gameId: GameState['gameId'],
-  ): Promise<PublicGameState> {
+  async chooseStarterTeam(gameId: GameState['gameId']): Promise<{
+    gameState: PublicGameState;
+    objectLocation: IObjectLocation;
+  }> {
     await this.areTeamsReady(gameId);
 
     const gameState = await this.getGameState(gameId);
@@ -228,14 +230,20 @@ export class GameService {
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 
-    return this.serializeGameState(gameState);
+    return {
+      gameState: this.serializeGameState(gameState),
+      objectLocation: gameState.objectLocation,
+    };
   }
 
   async changeObjectLocation(
     gameId: GameState['gameId'],
     playerId: Player['id'],
     hand: HandPosition,
-  ): Promise<PublicGameState> {
+  ): Promise<{
+    gameState: PublicGameState;
+    objectLocation: IObjectLocation;
+  }> {
     await this.areTeamsReady(gameId);
 
     const gameState = await this.getGameState(gameId);
@@ -247,7 +255,10 @@ export class GameService {
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 
-    return this.serializeGameState(gameState);
+    return {
+      gameState: this.serializeGameState(gameState),
+      objectLocation: gameState.objectLocation,
+    };
   }
 
   async guessObjectLocation(

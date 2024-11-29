@@ -123,21 +123,38 @@ export class GameGateway
   }
 
   @SubscribeMessage(Events.GAME_COIN_FLIP)
-  async handleChooseStarterTeam(@MessageBody() data: CoinFlipDTO) {
+  async handleChooseStarterTeam(
+    @MessageBody() data: CoinFlipDTO,
+    @ConnectedSocket() client: Socket,
+  ) {
     const { gameId } = data;
-    const gameState = await this.gameService.chooseStarterTeam(gameId);
+    const { gameState, objectLocation } =
+      await this.gameService.chooseStarterTeam(gameId);
+
+    if (objectLocation.playerId === client.id) {
+      client.emit(Events.PLAYER_RECEIVE_OBJECT, objectLocation);
+    }
+
     this.server.to(gameId).emit(Events.GAME_COIN_FLIP_RESULT, gameState);
   }
 
   @SubscribeMessage(Events.CHANGE_OBJECT_LOCATION)
-  async handleChangeObjectLocation(@MessageBody() data: SetObjectLocationDTO) {
+  async handleChangeObjectLocation(
+    @MessageBody() data: SetObjectLocationDTO,
+    @ConnectedSocket() client: Socket,
+  ) {
     const { gameId, playerId, hand } = data;
-    const gameState = await this.gameService.changeObjectLocation(
+    const { objectLocation } = await this.gameService.changeObjectLocation(
       gameId,
       playerId,
       hand,
     );
-    this.server.to(gameId).emit(Events.OBJECT_LOCATION_CHANGED, gameState);
+
+    if (objectLocation.playerId === client.id) {
+      client.emit(Events.PLAYER_RECEIVE_OBJECT, objectLocation);
+    }
+
+    // this.server.to(gameId).emit(Events.OBJECT_LOCATION_CHANGED, gameState);
   }
 
   @SubscribeMessage(Events.PLAYER_PLAYING)

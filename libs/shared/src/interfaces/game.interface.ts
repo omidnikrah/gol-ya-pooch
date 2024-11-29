@@ -10,8 +10,9 @@ export interface Player {
   isReady: boolean;
 }
 
-export interface PlayerWithTeam extends Player {
+export interface PrivatePlayerData extends Player {
   team: TeamNames;
+  objectLocation?: IObjectLocation;
 }
 
 export interface Team {
@@ -22,14 +23,16 @@ type Teams = Record<TeamNames, Team>;
 type Scores = Record<TeamNames, number>;
 export type GameSize = (typeof gameSize)[number];
 
+export interface IObjectLocation {
+  hand: HandPosition;
+  playerId: Player['id'];
+}
+
 export interface GameState {
   gameId: string;
   gameSize: GameSize;
   currentTurn: TeamNames;
-  objectLocation: {
-    hand: HandPosition;
-    playerId: Player['id'];
-  };
+  objectLocation: IObjectLocation;
   round: number;
   scores: Scores;
   teams: Teams;

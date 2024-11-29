@@ -1,14 +1,22 @@
-import { PlayerWithTeam } from '@gol-ya-pooch/shared';
+import { IObjectLocation, PrivatePlayerData } from '@gol-ya-pooch/shared';
 import { create } from 'zustand';
+import { immer } from 'zustand/middleware/immer';
 
 interface PlayerStore {
-  player: PlayerWithTeam | null;
+  player: PrivatePlayerData | null;
 
-  setPlayerData: (state: PlayerWithTeam) => void;
+  setPlayerData: (state: PrivatePlayerData) => void;
+  setObjectLocation: (objectLocation: IObjectLocation) => void;
 }
 
-export const usePlayerStore = create<PlayerStore>()((set) => ({
-  player: null,
+export const usePlayerStore = create<PlayerStore>()(
+  immer((set) => ({
+    player: null,
 
-  setPlayerData: (data: PlayerWithTeam) => set(() => ({ player: data })),
-}));
+    setPlayerData: (data: PrivatePlayerData) => set(() => ({ player: data })),
+    setObjectLocation: (objectLocation: IObjectLocation) =>
+      set((state) => {
+        state.player.objectLocation = objectLocation;
+      }),
+  })),
+);

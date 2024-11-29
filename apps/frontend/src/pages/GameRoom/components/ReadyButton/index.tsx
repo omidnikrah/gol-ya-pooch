@@ -1,6 +1,6 @@
 import { useSocket } from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
-import { Events, PlayerWithTeam } from '@gol-ya-pooch/shared';
+import { Events, PrivatePlayerData } from '@gol-ya-pooch/shared';
 import { useEffect } from 'react';
 
 export const ReadyButton = () => {
@@ -9,7 +9,7 @@ export const ReadyButton = () => {
   const { emit, on, off } = useSocket();
 
   useEffect(() => {
-    on(Events.PLAYER_READY_CONFIRMED, (playerData: PlayerWithTeam) => {
+    on(Events.PLAYER_READY_CONFIRMED, (playerData: PrivatePlayerData) => {
       setPlayerData(playerData);
     });
 
