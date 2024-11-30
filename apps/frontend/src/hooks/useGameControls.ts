@@ -57,8 +57,22 @@ export const useGameControls = () => {
       setObjectLocation(objectLocation);
     });
 
+    on(
+      Events.GUESS_LOCATION_RESULT,
+      (data: { gameState: PublicGameState; isGuessCorrect: boolean }) => {
+        if (data.isGuessCorrect) {
+          showToast('حدس گل درست بود 🎉', 5000);
+        } else {
+          showToast('دست گل نبود', 5000);
+        }
+        setGameState(data.gameState);
+      },
+    );
+
     return () => {
       off(Events.GAME_STATE_UPDATED);
+      off(Events.PLAYER_RECEIVE_OBJECT);
+      off(Events.GUESS_LOCATION_RESULT);
     };
   }, []);
 

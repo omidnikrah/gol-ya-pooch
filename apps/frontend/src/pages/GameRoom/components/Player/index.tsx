@@ -1,6 +1,13 @@
-import { useRequestEmptyPlay } from '@gol-ya-pooch/frontend/hooks';
+import {
+  useGuessHand,
+  useRequestEmptyPlay,
+} from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore } from '@gol-ya-pooch/frontend/stores';
-import { Player as IPlayerData, TeamNames } from '@gol-ya-pooch/shared';
+import {
+  HandPosition,
+  Player as IPlayerData,
+  TeamNames,
+} from '@gol-ya-pooch/shared';
 import Spline from '@splinetool/react-spline';
 import clsx from 'clsx';
 import { useMemo } from 'react';
@@ -15,12 +22,19 @@ interface IPlayer {
 export const Player = ({ team, data, isJoined, position }: IPlayer) => {
   const { playingPlayerId, gameState } = useGameStore();
   const { requestEmptyPlay } = useRequestEmptyPlay();
+  const { guessObjectLocation } = useGuessHand();
 
   const isPlaying = playingPlayerId === data?.id;
 
   const handleRequestEmptyPlay = () => {
     if (data?.id) {
       requestEmptyPlay(data?.id);
+    }
+  };
+
+  const handleGuessObject = (hand: HandPosition) => {
+    if (data?.id) {
+      guessObjectLocation(data?.id, hand);
     }
   };
 
@@ -64,7 +78,7 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
         />
       )}
       {gameState?.currentTurn === team && position !== 'bottom' && (
-        <div className="z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="z-10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 flex-col">
           <button
             type="button"
             className="px-4 py-2 rounded-full appearance-none border-none border-0 bg-primary text-sm text-[#541718] translate-y-4"
@@ -72,6 +86,22 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
           >
             درخواست خالی بازی
           </button>
+          <div className="gap-2 flex">
+            <button
+              type="button"
+              className="px-4 py-2 rounded-full appearance-none border-none border-0 bg-[#d1754d] text-sm text-[#61291a] translate-y-4 hover:scale-110 transition-all"
+              onClick={() => handleGuessObject('left')}
+            >
+              چپ گل
+            </button>
+            <button
+              type="button"
+              className="px-4 py-2 rounded-full appearance-none border-none border-0 bg-[#d1754d] text-sm text-[#61291a] translate-y-4 hover:scale-110 transition-all"
+              onClick={() => handleGuessObject('right')}
+            >
+              راست گل
+            </button>
+          </div>
         </div>
       )}
     </div>

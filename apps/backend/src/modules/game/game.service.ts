@@ -265,7 +265,12 @@ export class GameService {
     gameId: GameState['gameId'],
     playerId: Player['id'],
     hand: HandPosition,
-  ): Promise<{ gameState: PublicGameState; isGameFinished: boolean }> {
+  ): Promise<{
+    gameState: PublicGameState;
+    isGameFinished: boolean;
+    isGuessCorrect: boolean;
+    objectLocation: IObjectLocation;
+  }> {
     await this.areTeamsReady(gameId);
 
     const gameState = await this.getGameState(gameId);
@@ -298,7 +303,12 @@ export class GameService {
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
 
-    return { gameState: this.serializeGameState(gameState), isGameFinished };
+    return {
+      gameState: this.serializeGameState(gameState),
+      objectLocation: gameState.objectLocation,
+      isGameFinished,
+      isGuessCorrect,
+    };
   }
 
   async getRoomInfo(gameId: GameState['gameId']): Promise<PublicGameState> {

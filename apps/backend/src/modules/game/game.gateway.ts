@@ -164,9 +164,12 @@ export class GameGateway
   }
 
   @SubscribeMessage(Events.GUESS_OBJECT_LOCATION)
-  async handleGuessObjectLocation(@MessageBody() data: GuessObjectLocationDTO) {
+  async handleGuessObjectLocation(
+    @MessageBody() data: GuessObjectLocationDTO,
+    @ConnectedSocket() client: Socket,
+  ) {
     const { gameId, playerId, hand } = data;
-    const { gameState, isGameFinished } =
+    const { gameState, isGameFinished, isGuessCorrect, objectLocation } =
       await this.gameService.guessObjectLocation(gameId, playerId, hand);
 
     if (isGameFinished) {
@@ -177,9 +180,18 @@ export class GameGateway
         roundsPlayed: gameState.round,
       };
 
-      this.server.to(gameId).emit(Events.GAME_FINISHED, finishedGamePayload);
+      this.server.to(gameId).emit(Events.GAME_FINISHED, {
+        data: finishedGamePayload,
+        isGuessCorrect,
+      });
     } else {
-      this.server.to(gameId).emit(Events.GUESS_LOCATION_RESULT, gameState);
+      if (objectLocation.playerId === client.id) {
+        client.emit(Events.PLAYER_RECEIVE_OBJECT, objectLocation);
+      }
+
+      this.server
+        .to(gameId)
+        .emit(Events.GUESS_LOCATION_RESULT, { gameState, isGuessCorrect });
     }
   }
 
