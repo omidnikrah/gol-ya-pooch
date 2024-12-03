@@ -4,15 +4,23 @@ import {
   Events,
   HandPosition,
   IObjectLocation,
+  Player,
   PublicGameState,
 } from '@gol-ya-pooch/shared';
 import { useEffect } from 'react';
+import { useParams } from 'wouter';
 
 import { useKeyPress, useSocket } from '.';
 
 export const useGameControls = () => {
-  const { gameState, requestedPlayerIdToEmptyPlay, setGameState } =
-    useGameStore();
+  const params = useParams();
+  const {
+    gameState,
+    requestedPlayerIdToEmptyPlay,
+    setGameState,
+    setPlayingPlayerId,
+    setRequestedPlayerIdToEmptyPlay,
+  } = useGameStore();
   const { player, setObjectLocation } = usePlayerStore();
   const { emit, on, off } = useSocket();
   const { showToast } = useToast();
@@ -75,6 +83,30 @@ export const useGameControls = () => {
       off(Events.GUESS_LOCATION_RESULT);
     };
   }, []);
+
+  useEffect(() => {
+    emit(Events.GET_ROOM_INFO, {
+      gameId: params.gameId,
+    });
+
+    on(Events.ROOM_INFO_FETCHED, (data: PublicGameState) => {
+      setGameState(data);
+    });
+
+    on(Events.REQUEST_EMPTY_PLAY, (playerId: Player['id']) => {
+      setRequestedPlayerIdToEmptyPlay(playerId);
+    });
+
+    on(Events.PLAYER_PLAYING, (playerId: Player['id']) => {
+      setPlayingPlayerId(playerId);
+    });
+
+    return () => {
+      off(Events.ROOM_INFO_FETCHED);
+      off(Events.REQUEST_EMPTY_PLAY);
+      off(Events.PLAYER_PLAYING);
+    };
+  }, [params.gameId]);
 
   return null;
 };

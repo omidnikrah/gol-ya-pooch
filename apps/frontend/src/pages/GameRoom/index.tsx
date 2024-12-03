@@ -1,55 +1,17 @@
 import { GamePhases } from '@gol-ya-pooch/frontend/enums';
 import { useGameControls, useSocket } from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
-import {
-  Events,
-  Player,
-  PublicGameState,
-  TeamNames,
-} from '@gol-ya-pooch/shared';
-import { useEffect } from 'react';
-import { useParams } from 'wouter';
+import { TeamNames } from '@gol-ya-pooch/shared';
 
 import GameTableIcon from './assets/game-table.svg';
 import { CoinFlipScene, ReadyButton, Team } from './components';
 
 const GameRoomPage = () => {
-  const params = useParams();
-  const { on, emit, off, error } = useSocket();
-  const {
-    phase,
-    gameState,
-    setGameState,
-    setPlayingPlayerId,
-    setRequestedPlayerIdToEmptyPlay,
-  } = useGameStore();
+  const { error } = useSocket();
+  const { phase, gameState } = useGameStore();
   const { player } = usePlayerStore();
   const gameSize = gameState ? gameState.gameSize / 2 : 0;
   useGameControls();
-
-  useEffect(() => {
-    emit(Events.GET_ROOM_INFO, {
-      gameId: params.gameId,
-    });
-
-    on(Events.ROOM_INFO_FETCHED, (data: PublicGameState) => {
-      setGameState(data);
-    });
-
-    on(Events.REQUEST_EMPTY_PLAY, (playerId: Player['id']) => {
-      setRequestedPlayerIdToEmptyPlay(playerId);
-    });
-
-    on(Events.PLAYER_PLAYING, (playerId: Player['id']) => {
-      setPlayingPlayerId(playerId);
-    });
-
-    return () => {
-      off(Events.ROOM_INFO_FETCHED);
-      off(Events.REQUEST_EMPTY_PLAY);
-      off(Events.PLAYER_PLAYING);
-    };
-  }, [params.gameId]);
 
   if (error && error.type === 'game_not_found') {
     return (
