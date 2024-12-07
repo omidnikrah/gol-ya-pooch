@@ -1,7 +1,9 @@
 import { useToast } from '@gol-ya-pooch/frontend/components';
+import { GamePhases } from '@gol-ya-pooch/frontend/enums';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import {
   Events,
+  FinishGamePayload,
   HandPosition,
   IObjectLocation,
   Player,
@@ -20,6 +22,8 @@ export const useGameControls = () => {
     setGameState,
     setPlayingPlayerId,
     setRequestedPlayerIdToEmptyPlay,
+    setGamePhase,
+    setFinishGameResult,
   } = useGameStore();
   const { player, setObjectLocation } = usePlayerStore();
   const { emit, on, off } = useSocket();
@@ -81,6 +85,14 @@ export const useGameControls = () => {
           showToast('دست گل نبود', 5000);
         }
         setGameState(data.gameState);
+      },
+    );
+
+    on(
+      Events.GAME_FINISHED,
+      ({ data }: { data: FinishGamePayload; isGuessCorrect: boolean }) => {
+        setGamePhase(GamePhases.GAME_FINISHED);
+        setFinishGameResult(data);
       },
     );
 

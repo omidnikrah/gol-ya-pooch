@@ -1,5 +1,9 @@
 import { GamePhases } from '@gol-ya-pooch/frontend/enums';
-import { Player, PublicGameState } from '@gol-ya-pooch/shared';
+import {
+  FinishGamePayload,
+  Player,
+  PublicGameState,
+} from '@gol-ya-pooch/shared';
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
@@ -8,11 +12,13 @@ interface GameStore {
   phase: GamePhases;
   playingPlayerId: Player['id'] | null;
   requestedPlayerIdToEmptyPlay: Player['id'] | null;
+  finishGameResult: FinishGamePayload | null;
 
   setGameState: (state: PublicGameState) => void;
   setGamePhase: (phase: GamePhases) => void;
   setPlayingPlayerId: (playerId: Player['id'] | null) => void;
   setRequestedPlayerIdToEmptyPlay: (playerId: Player['id'] | null) => void;
+  setFinishGameResult: (gameResult: FinishGamePayload | null) => void;
 }
 
 export const useGameStore = create(
@@ -21,6 +27,7 @@ export const useGameStore = create(
     phase: GamePhases.WAITING_FOR_PLAYERS,
     playingPlayerId: null,
     requestedPlayerIdToEmptyPlay: null,
+    finishGameResult: null,
 
     setGameState: (data) => set(() => ({ gameState: data })),
     setGamePhase: (phase) => set(() => ({ phase: phase })),
@@ -28,6 +35,8 @@ export const useGameStore = create(
       set(() => ({ playingPlayerId: playerId })),
     setRequestedPlayerIdToEmptyPlay: (playerId) =>
       set(() => ({ requestedPlayerIdToEmptyPlay: playerId })),
+    setFinishGameResult: (gameResult) =>
+      set(() => ({ finishGameResult: gameResult })),
   })),
 );
 

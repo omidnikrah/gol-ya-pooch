@@ -2,7 +2,12 @@ import { WsValidationExceptionFilter } from '@gol-ya-pooch/backend/common/filter
 import { GetRoomInfoDTO } from '@gol-ya-pooch/backend/modules/game/dto/get-room-info.dto';
 import { PlayerPlayingDTO } from '@gol-ya-pooch/backend/modules/game/dto/player-playing.dto';
 import { RequestEmptyPlayDTO } from '@gol-ya-pooch/backend/modules/game/dto/request-empty-play.dto';
-import { Events, Player, PublicGameState } from '@gol-ya-pooch/shared';
+import {
+  Events,
+  FinishGamePayload,
+  Player,
+  PublicGameState,
+} from '@gol-ya-pooch/shared';
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   WebSocketGateway,
@@ -173,7 +178,7 @@ export class GameGateway
       await this.gameService.guessObjectLocation(gameId, playerId, hand);
 
     if (isGameFinished) {
-      const finishedGamePayload = {
+      const finishedGamePayload: FinishGamePayload = {
         winnerTeam:
           gameState.scores.teamA > gameState.scores.teamB ? 'teamA' : 'teamB',
         finalScores: gameState.scores,

@@ -39,3 +39,9 @@ export interface GameState {
 }
 
 export type PublicGameState = Omit<GameState, 'objectLocation'>;
+
+export interface FinishGamePayload {
+  winnerTeam: TeamNames;
+  finalScores: Scores;
+  roundsPlayed: number;
+}

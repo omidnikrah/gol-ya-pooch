@@ -6,6 +6,7 @@ import { TeamNames } from '@gol-ya-pooch/shared';
 import GameTableIcon from './assets/game-table.svg';
 import {
   CoinFlipScene,
+  FinishGameResultModal,
   JoinGameRoomModal,
   ReadyButton,
   RoomInformation,
@@ -51,6 +52,7 @@ const GameRoomPage = () => {
       {phase === GamePhases.WAITING_FOR_PLAYERS && <JoinGameRoomModal />}
       {phase === GamePhases.WAITING_FOR_READY && <ReadyButton />}
       {phase === GamePhases.FLIPPING_COIN && <CoinFlipScene />}
+      {phase === GamePhases.GAME_FINISHED && <FinishGameResultModal />}
     </>
   );
 };

@@ -5,3 +5,4 @@ export * from './Coin';
 export * from './CoinFlipScene';
 export * from './JoinGameRoomModal';
 export * from './RoomInformation';
+export * from './FinishGameResultModal';

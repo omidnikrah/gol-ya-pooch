@@ -2998,6 +2998,11 @@
     "@types/node" "*"
     "@types/responselike" "^1.0.0"
 
+"@types/canvas-confetti@^1.6.4":
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/@types/canvas-confetti/-/canvas-confetti-1.6.4.tgz#620fd8d78b335d6a4046c0f73236d6988b37552a"
+  integrity sha512-fNyZ/Fdw/Y92X0vv7B+BD6ysHL4xVU5dJcgzgxLdGbn8O3PezZNIJpml44lKM0nsGur+o/6+NZbZeNTt00U1uA==
+
 "@types/connect-history-api-fallback@^1.5.4":
   version "1.5.4"
   resolved "https://registry.yarnpkg.com/@types/connect-history-api-fallback/-/connect-history-api-fallback-1.5.4.tgz#7de71645a103056b48ac3ce07b3520b819c1d5b3"
@@ -4486,6 +4491,11 @@ caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001426, caniuse-lite@^1.0.30001646, can
   version "1.0.30001669"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001669.tgz#fda8f1d29a8bfdc42de0c170d7f34a9cf19ed7a3"
   integrity sha512-DlWzFDJqstqtIVx1zeSpIMLjunf5SmwOw0N2Ck/QSQdS8PLS4+9HrLaYei4w8BIAL7IB/UEDu889d8vhCTPA0w==
+
+canvas-confetti@^1.9.2:
+  version "1.9.3"
+  resolved "https://registry.yarnpkg.com/canvas-confetti/-/canvas-confetti-1.9.3.tgz#ef4c857420ad8045ab4abe8547261c8cdf229845"
+  integrity sha512-rFfTURMvmVEX1gyXFgn5QMn81bYk70qa0HLzcIOSVEyl57n6o9ItHeBtUSWdvKAPY0xlvBHno4/v3QPrT83q9g==
 
 chai@^4.3.10:
   version "4.5.0"
@@ -9896,6 +9906,14 @@ raw-body@2.5.2:
     http-errors "2.0.0"
     iconv-lite "0.4.24"
     unpipe "1.0.0"
+
+react-canvas-confetti@^2.0.7:
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/react-canvas-confetti/-/react-canvas-confetti-2.0.7.tgz#0499e7815b50f6a7731fd01729e07c30faa300f3"
+  integrity sha512-DIj44O35TPAwJkUSIZqWdVsgAMHtVf8h7YNmnr3jF3bn5mG+d7Rh9gEcRmdJfYgRzh6K+MAGujwUoIqQyLnMJw==
+  dependencies:
+    "@types/canvas-confetti" "^1.6.4"
+    canvas-confetti "^1.9.2"
 
 react-dom@18.3.1:
   version "18.3.1"
