@@ -280,24 +280,25 @@ export class GameService {
       hand === gameState.objectLocation.hand;
 
     if (isGuessCorrect) {
-      gameState.scores[gameState.currentTurn] += 1;
       gameState.currentTurn =
         gameState.currentTurn === 'teamA' ? 'teamB' : 'teamA';
-
-      const teamMembers = gameState.teams[gameState.currentTurn].members;
-
-      gameState.objectLocation = {
-        hand: 'left',
-        playerId:
-          teamMembers[
-            Math.round(teamMembers.length === 1 ? 0 : teamMembers.length / 2)
-          ].id,
-      };
     }
+
+    gameState.scores[gameState.currentTurn] += 1;
 
     if (gameState.scores[gameState.currentTurn] >= GameConfig.maxScores) {
       isGameFinished = true;
     }
+
+    const teamMembers = gameState.teams[gameState.currentTurn].members;
+
+    gameState.objectLocation = {
+      hand: 'left',
+      playerId:
+        teamMembers[
+          Math.round(teamMembers.length === 1 ? 0 : teamMembers.length / 2)
+        ].id,
+    };
 
     gameState.round += 1;
 
