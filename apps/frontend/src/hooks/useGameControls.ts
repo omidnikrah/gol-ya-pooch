@@ -7,7 +7,7 @@ import {
   Player,
   PublicGameState,
 } from '@gol-ya-pooch/shared';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'wouter';
 
 import { useKeyPress, useSocket } from '.';
@@ -24,9 +24,16 @@ export const useGameControls = () => {
   const { player, setObjectLocation } = usePlayerStore();
   const { emit, on, off } = useSocket();
   const { showToast } = useToast();
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const handleEmitPlaying = (hand: HandPosition) => {
     if (requestedPlayerIdToEmptyPlay === player?.id) {
+      setIsPlaying(true);
+
+      setTimeout(() => {
+        setIsPlaying(false);
+      }, 4000);
+
       emit(Events.PLAYER_PLAYING, {
         playerId: player?.id,
         gameId: gameState?.gameId,
@@ -51,10 +58,10 @@ export const useGameControls = () => {
   });
 
   useEffect(() => {
-    if (requestedPlayerIdToEmptyPlay === player?.id) {
+    if (requestedPlayerIdToEmptyPlay === player?.id && !isPlaying) {
       showToast('شما باید خالی بازی کنید', 5000);
     }
-  }, [requestedPlayerIdToEmptyPlay, player]);
+  }, [requestedPlayerIdToEmptyPlay, player, isPlaying]);
 
   useEffect(() => {
     on(Events.GAME_STATE_UPDATED, (data: PublicGameState) => {

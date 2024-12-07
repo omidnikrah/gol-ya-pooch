@@ -32,7 +32,11 @@ export const CoinFlipScene = () => {
       on(Events.GAME_COIN_FLIP_RESULT, (data: GameState) => {
         setGameState(data);
         setTimeout(() => {
-          setGamePhase(GamePhases.SPREADING_OBJECT);
+          if (data.gameSize > 2) {
+            setGamePhase(GamePhases.SPREADING_OBJECT);
+          } else {
+            setGamePhase(GamePhases.PLAYING);
+          }
         }, STARTING_TURN_MESSAGE_TIMEOUT);
       });
       return () => {

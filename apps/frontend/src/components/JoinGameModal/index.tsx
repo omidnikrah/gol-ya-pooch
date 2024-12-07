@@ -1,7 +1,13 @@
+import { GamePhases } from '@gol-ya-pooch/frontend/enums';
 import { useSocket } from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import { convertToPersianNumbers } from '@gol-ya-pooch/frontend/utils';
-import { Events, gameSize, type GameState, Player } from '@gol-ya-pooch/shared';
+import {
+  Events,
+  gameSize,
+  type GameState,
+  PrivatePlayerData,
+} from '@gol-ya-pooch/shared';
 import clsx from 'clsx';
 import { KeyboardEvent, useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
@@ -12,7 +18,7 @@ export const JoinGameModal = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { emit, on, off } = useSocket();
   const [, navigate] = useLocation();
-  const { setGameState } = useGameStore();
+  const { setGameState, setGamePhase } = useGameStore();
   const { setPlayerData } = usePlayerStore();
 
   useEffect(() => {
@@ -24,8 +30,9 @@ export const JoinGameModal = () => {
       }
     });
 
-    on(Events.PLAYER_JOINED, (player: Player) => {
+    on(Events.PLAYER_JOINED, (player: PrivatePlayerData) => {
       setPlayerData(player);
+      setGamePhase(GamePhases.WAITING_FOR_READY);
     });
 
     return () => {

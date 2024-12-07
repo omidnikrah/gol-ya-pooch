@@ -16,7 +16,9 @@ export const usePlayerStore = create<PlayerStore>()(
     setPlayerData: (data: PrivatePlayerData) => set(() => ({ player: data })),
     setObjectLocation: (objectLocation: IObjectLocation) =>
       set((state) => {
-        state.player.objectLocation = objectLocation;
+        if (state.player) {
+          state.player.objectLocation = objectLocation;
+        }
       }),
   })),
 );

@@ -4,7 +4,12 @@ import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import { TeamNames } from '@gol-ya-pooch/shared';
 
 import GameTableIcon from './assets/game-table.svg';
-import { CoinFlipScene, ReadyButton, Team } from './components';
+import {
+  CoinFlipScene,
+  JoinGameRoomModal,
+  ReadyButton,
+  Team,
+} from './components';
 
 const GameRoomPage = () => {
   const { error } = useSocket();
@@ -22,6 +27,8 @@ const GameRoomPage = () => {
   }
 
   const playerTeamName = player?.team ?? 'teamA';
+
+  console.log(phase);
 
   return (
     <>
@@ -41,6 +48,7 @@ const GameRoomPage = () => {
           <GameTableIcon className="w-full h-auto" />
         </div>
       </div>
+      {phase === GamePhases.WAITING_FOR_PLAYERS && <JoinGameRoomModal />}
       {phase === GamePhases.WAITING_FOR_READY && <ReadyButton />}
       {phase === GamePhases.FLIPPING_COIN && <CoinFlipScene />}
     </>
