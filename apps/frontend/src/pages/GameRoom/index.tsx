@@ -8,6 +8,7 @@ import {
   CoinFlipScene,
   JoinGameRoomModal,
   ReadyButton,
+  RoomInformation,
   Team,
 } from './components';
 
@@ -28,8 +29,6 @@ const GameRoomPage = () => {
 
   const playerTeamName = player?.team ?? 'teamA';
 
-  console.log(phase);
-
   return (
     <>
       <div className="flex justify-center">
@@ -48,6 +47,7 @@ const GameRoomPage = () => {
           <GameTableIcon className="w-full h-auto" />
         </div>
       </div>
+      <RoomInformation />
       {phase === GamePhases.WAITING_FOR_PLAYERS && <JoinGameRoomModal />}
       {phase === GamePhases.WAITING_FOR_READY && <ReadyButton />}
       {phase === GamePhases.FLIPPING_COIN && <CoinFlipScene />}

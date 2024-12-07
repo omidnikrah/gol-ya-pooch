@@ -32,6 +32,8 @@ module.exports = {
         'secondary-50': '#643890',
         'purple-white': '#DED1ED',
         'purple-80': '#231B2F',
+        'blue-team': '#75a5dc',
+        'red-team': '#fd757a',
       },
       keyframes: {
         'move-top-left': {
