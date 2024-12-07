@@ -279,12 +279,8 @@ export class GameService {
       playerId === gameState.objectLocation.playerId &&
       hand === gameState.objectLocation.hand;
 
-    if (!isGuessCorrect) {
+    if (isGuessCorrect) {
       gameState.scores[gameState.currentTurn] += 1;
-      if (gameState.scores[gameState.currentTurn] >= GameConfig.maxScores) {
-        isGameFinished = true;
-      }
-    } else {
       gameState.currentTurn =
         gameState.currentTurn === 'teamA' ? 'teamB' : 'teamA';
 
@@ -297,6 +293,10 @@ export class GameService {
             Math.round(teamMembers.length === 1 ? 0 : teamMembers.length / 2)
           ].id,
       };
+    }
+
+    if (gameState.scores[gameState.currentTurn] >= GameConfig.maxScores) {
+      isGameFinished = true;
     }
 
     gameState.round += 1;
