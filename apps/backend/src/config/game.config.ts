@@ -1,3 +1,3 @@
 export default {
-  maxScores: 2,
+  maxScores: 9,
 };
