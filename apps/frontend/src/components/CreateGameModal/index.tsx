@@ -18,7 +18,6 @@ export const CreateGameModal = () => {
       setIsLoading(false);
       if (roomData) {
         navigate(`/game/${roomData?.gameId}`);
-        console.log(roomData);
       }
     });
 
