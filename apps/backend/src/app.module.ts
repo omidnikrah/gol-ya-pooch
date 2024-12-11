@@ -11,6 +11,7 @@ import { RedisModule } from './modules/redis/redis.module';
     GameModule,
     ConfigModule.forRoot({
       ignoreEnvFile: process.env.NODE_ENV === 'production',
+      isGlobal: true,
     }),
     RedisModule.forRoot({
       host: process.env.REDIS_HOST,
