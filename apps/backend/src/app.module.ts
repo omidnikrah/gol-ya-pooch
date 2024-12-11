@@ -9,7 +9,9 @@ import { RedisModule } from './modules/redis/redis.module';
 @Module({
   imports: [
     GameModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      ignoreEnvFile: process.env.NODE_ENV === 'production',
+    }),
     RedisModule.forRoot({
       host: process.env.REDIS_HOST,
       port: parseInt(process.env.REDIS_PORT, 10),
