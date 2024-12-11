@@ -12,6 +12,7 @@ import { RedisModule } from './modules/redis/redis.module';
       host: process.env.REDIS_HOST,
       port: parseInt(process.env.REDIS_PORT, 10),
       password: process.env.REDIS_PASSWORD,
+      username: process.env.REDIS_USERNAME,
     }),
   ],
   controllers: [AppController],
