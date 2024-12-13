@@ -1,0 +1,88 @@
+{
+  "branches": [
+    "main"
+  ],
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits",
+        "parserOpts": {
+          "headerPattern": "^[^a-zA-Z0-9]*(\\w*)(?:\\((.*)\\))?:\\s*(.*)$",
+          "headerCorrespondence": ["type", "scope", "subject"]
+        }
+      }
+    ],
+    [
+      "semantic-release-gitmoji",
+      {
+        "releaseRules": {
+          "major": [
+            ":boom:",
+            ":fire:"
+          ],
+          "minor": [
+            ":sparkles:",
+            ":tada:",
+            ":construction:",
+            ":goal_net:",
+            ":rocket:",
+            ":chart_with_upwards_trend:"
+          ],
+          "patch": [
+            ":bug:",
+            ":ambulance:",
+            ":lock:",
+            ":zap:",
+            ":lipstick:",
+            ":wheelchair:",
+            ":memo:",
+            ":bulb:",
+            ":mag:",
+            ":green_heart:",
+            ":wrench:",
+            ":hammer:",
+            ":package:",
+            ":recycle:",
+            ":apple:",
+            ":penguin:",
+            ":robot:",
+            ":see_no_evil:",
+            ":pencil2:",
+            ":twisted_rightwards_arrows:",
+            ":arrow_up:",
+            ":arrow_down:",
+            ":heavy_plus_sign:",
+            ":heavy_minus_sign:"
+          ]
+        }
+      }
+    ],
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/github",
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogTitle": "# Changelog\n\nAll notable changes to this project will be documented in this file.\nPlease read [CONTRIBUTING.md](CONTRIBUTING.md) for commit guidelines.",
+        "changelogFile": "CHANGELOG.md"
+      }
+    ],
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": false
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "CHANGELOG.md",
+          "package.json"
+        ],
+        "message": "💥 chore: v${nextRelease.version} [skip ci]"
+      }
+    ]
+  ],
+  "publish": false
+}
