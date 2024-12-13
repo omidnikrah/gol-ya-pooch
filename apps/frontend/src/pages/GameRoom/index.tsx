@@ -1,3 +1,4 @@
+import { KeyboardShortcutsModal } from '@gol-ya-pooch/frontend/components';
 import { GamePhases } from '@gol-ya-pooch/frontend/enums';
 import { useGameControls, useSocket } from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
@@ -59,6 +60,7 @@ const GameRoomPage = () => {
         </div>
       </div>
       <RoomInformation />
+      <KeyboardShortcutsModal />
       {phase === GamePhases.WAITING_FOR_PLAYERS && <JoinGameRoomModal />}
       {phase === GamePhases.WAITING_FOR_READY && <ReadyButton />}
       {phase === GamePhases.WAITING_FOR_READY && !isAllPlayersJoined && (
