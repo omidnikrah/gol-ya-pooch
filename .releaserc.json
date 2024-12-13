@@ -4,16 +4,6 @@
   ],
   "plugins": [
     [
-      "@semantic-release/commit-analyzer",
-      {
-        "preset": "conventionalcommits",
-        "parserOpts": {
-          "headerPattern": "^[^a-zA-Z0-9]*(\\w*)(?:\\((.*)\\))?:\\s*(.*)$",
-          "headerCorrespondence": ["type", "scope", "subject"]
-        }
-      }
-    ],
-    [
       "semantic-release-gitmoji",
       {
         "releaseRules": {
@@ -93,6 +83,5 @@
         "message": "💥 chore: v${nextRelease.version} [skip ci]"
       }
     ]
-  ],
-  "publish": false
+  ]
 }
