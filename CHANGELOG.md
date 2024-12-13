@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for commit guidelines.
 
+# [v1.0.1](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.0.0...v1.0.1) (2024-12-13)
+
+## 🐛 Bug Fixes
+- [`094f1eb`](https://github.com/omidnikrah/gol-ya-pooch/commit/094f1eb)  fix: set default hand position randomly 
+
+
+
+## [1.0.1](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.0.0...v1.0.1) (2024-12-13)
+
 # v1.0.0 (2024-12-13)
 
 ## ✨ New Features
