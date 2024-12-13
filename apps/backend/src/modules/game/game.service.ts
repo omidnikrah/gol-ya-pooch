@@ -221,7 +221,7 @@ export class GameService {
     const teamMembers = gameState.teams[gameState.currentTurn].members;
 
     gameState.objectLocation = {
-      hand: 'left',
+      hand: this.getHandPosition(),
       playerId:
         teamMembers[
           Math.round(teamMembers.length === 1 ? 0 : teamMembers.length / 2)
@@ -293,7 +293,7 @@ export class GameService {
     const teamMembers = gameState.teams[gameState.currentTurn].members;
 
     gameState.objectLocation = {
-      hand: 'left',
+      hand: this.getHandPosition(),
       playerId:
         teamMembers[
           Math.round(teamMembers.length === 1 ? 0 : teamMembers.length / 2)
@@ -403,5 +403,9 @@ export class GameService {
     delete clonedGameState.objectLocation;
 
     return clonedGameState;
+  }
+
+  private getHandPosition(): HandPosition {
+    return Math.random() < 0.5 ? 'left' : 'right';
   }
 }
