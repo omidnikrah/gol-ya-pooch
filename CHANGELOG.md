@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for commit guidelines.
 
+# [v1.1.1](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.1.0...v1.1.1) (2024-12-14)
+
+## 🐛 Bug Fixes
+- [`ceacb5e`](https://github.com/omidnikrah/gol-ya-pooch/commit/ceacb5e)  fix: disable create and join 4 and 6 players game 
+
+
+
+## [1.1.1](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.1.0...v1.1.1) (2024-12-14)
+
 # [v1.1.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.0.1...v1.1.0) (2024-12-13)
 
 ## ✨ New Features
