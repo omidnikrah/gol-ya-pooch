@@ -3,7 +3,7 @@ import { convertToPersianNumbers } from '@gol-ya-pooch/frontend/utils';
 import { Events, gameSize } from '@gol-ya-pooch/shared';
 import type { GameState } from '@gol-ya-pooch/shared';
 import clsx from 'clsx';
-import { KeyboardEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 
 export const CreateGameModal = () => {
@@ -28,13 +28,6 @@ export const CreateGameModal = () => {
 
   const handleSetGameSize = (size: number) => {
     setSelectedGameSize(size);
-  };
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLElement>, size: number) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      handleSetGameSize(size);
-    }
   };
 
   const handleCreateGame = () => {
@@ -78,19 +71,18 @@ export const CreateGameModal = () => {
             </h3>
             <div className="my-8 inline-flex shrink-0 bg-secondary-50 rounded-full p-1">
               {gameSize.map((size) => (
-                <span
+                <button
                   key={size}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(event) => handleKeyDown(event, size)}
+                  type="button"
                   className={clsx(
-                    'px-4 py-2 text-white rounded-full cursor-pointer transition-all duration-200',
+                    'px-4 py-2 text-white rounded-full cursor-pointer transition-all duration-200 appearance-none disabled:opacity-30 disabled:cursor-not-allowed',
                     { 'bg-secondary': selectedGameSize === size },
                   )}
                   onClick={() => handleSetGameSize(size)}
+                  disabled={size !== 2}
                 >
                   {convertToPersianNumbers(size)} نفره
-                </span>
+                </button>
               ))}
             </div>
             <div>
