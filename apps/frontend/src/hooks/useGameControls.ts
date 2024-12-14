@@ -1,5 +1,5 @@
 import { useToast } from '@gol-ya-pooch/frontend/components';
-import { GamePhases } from '@gol-ya-pooch/frontend/enums';
+import { GamePhases, Toasts } from '@gol-ya-pooch/frontend/enums';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import {
   Events,
@@ -27,7 +27,7 @@ export const useGameControls = () => {
   } = useGameStore();
   const { player, setObjectLocation } = usePlayerStore();
   const { emit, on, off } = useSocket();
-  const { showToast } = useToast();
+  const { showToast, dismissToastByName } = useToast();
   const [isPlaying, setIsPlaying] = useState(false);
 
   const handleEmitPlaying = (hand: HandPosition) => {
@@ -37,6 +37,8 @@ export const useGameControls = () => {
       setTimeout(() => {
         setIsPlaying(false);
       }, 4000);
+
+      dismissToastByName(Toasts.REQUESTED_EMPTY_PLAY);
 
       emit(Events.PLAYER_PLAYING, {
         playerId: player?.id,
@@ -63,7 +65,12 @@ export const useGameControls = () => {
 
   useEffect(() => {
     if (requestedPlayerIdToEmptyPlay === player?.id && !isPlaying) {
-      showToast('شما باید خالی بازی کنید', 5000);
+      showToast(
+        'شما باید خالی بازی کنید',
+        5000,
+        true,
+        Toasts.REQUESTED_EMPTY_PLAY,
+      );
     }
   }, [requestedPlayerIdToEmptyPlay, player, isPlaying]);
 

@@ -1,23 +1,16 @@
+import { motion } from 'framer-motion';
+
 import {
   transformEndAnimation,
   opacityEndAnimation,
   transformStartAnimation,
-} from '@gol-ya-pooch/frontend/components/Toast/animations';
-import { motion } from 'framer-motion';
-import { useEffect } from 'react';
+} from './animations';
 
 interface IToastProps {
   message: string;
-  onDismiss: () => void;
-  duration?: number;
 }
 
-export const Toast = ({ message, onDismiss, duration }: IToastProps) => {
-  useEffect(() => {
-    const timer = setTimeout(onDismiss, duration);
-    return () => clearTimeout(timer);
-  }, [duration]);
-
+export const Toast = ({ message }: IToastProps) => {
   return (
     <motion.div
       exit={{

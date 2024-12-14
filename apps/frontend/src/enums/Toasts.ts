@@ -1,0 +1,3 @@
+export enum Toasts {
+  REQUESTED_EMPTY_PLAY = 'REQUESTED_EMPTY_PLAY',
+}
