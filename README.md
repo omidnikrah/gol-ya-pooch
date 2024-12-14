@@ -4,7 +4,7 @@
 
 <br />
 
-<a href="https://gol-ya-pooch.apps.omid.toys">
+<a href="https://gol-ya-pooch.apps.omid.toys" target="_blank">
   <img src=".github/join-game-btn.png" alt="Join Game" width="200" />
 </a>
 
