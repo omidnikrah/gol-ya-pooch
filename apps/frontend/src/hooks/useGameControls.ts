@@ -12,7 +12,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useParams } from 'wouter';
 
-import { useKeyPress, useSocket } from '.';
+import { useKeyPress, useSocket, useSound } from '.';
 
 export const useGameControls = () => {
   const params = useParams();
@@ -29,9 +29,14 @@ export const useGameControls = () => {
   const { emit, on, off } = useSocket();
   const { showToast, dismissToastByName } = useToast();
   const [isPlaying, setIsPlaying] = useState(false);
+  const { play: playNotificationSound } = useSound('/sounds/notification.mp3');
+  const { play: playBuzzSound } = useSound('/sounds/buzz.mp3');
+  const { play: playEmptyPlayingSound } = useSound('/sounds/empty-playing.mp3');
+  const { play: playClappingSound } = useSound('/sounds/clapping.mp3');
 
   const handleEmitPlaying = (hand: HandPosition) => {
     if (requestedPlayerIdToEmptyPlay === player?.id) {
+      playEmptyPlayingSound();
       setIsPlaying(true);
 
       setTimeout(() => {
@@ -65,6 +70,7 @@ export const useGameControls = () => {
 
   useEffect(() => {
     if (requestedPlayerIdToEmptyPlay === player?.id && !isPlaying) {
+      playNotificationSound();
       showToast(
         'شما باید خالی بازی کنید',
         5000,
@@ -89,6 +95,7 @@ export const useGameControls = () => {
         if (data.isGuessCorrect) {
           showToast('حدس گل درست بود 🎉', 5000);
         } else {
+          playBuzzSound();
           showToast('دست گل نبود', 5000);
         }
         setGameState(data.gameState);
@@ -98,6 +105,7 @@ export const useGameControls = () => {
     on(
       Events.GAME_FINISHED,
       ({ data }: { data: FinishGamePayload; isGuessCorrect: boolean }) => {
+        playClappingSound();
         setGamePhase(GamePhases.GAME_FINISHED);
         setFinishGameResult(data);
       },

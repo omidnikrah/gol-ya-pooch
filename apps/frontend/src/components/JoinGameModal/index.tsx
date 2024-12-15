@@ -1,5 +1,5 @@
 import { GamePhases } from '@gol-ya-pooch/frontend/enums';
-import { useSocket } from '@gol-ya-pooch/frontend/hooks';
+import { useSocket, useSound } from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import { convertToPersianNumbers } from '@gol-ya-pooch/frontend/utils';
 import {
@@ -20,12 +20,14 @@ export const JoinGameModal = () => {
   const [, navigate] = useLocation();
   const { setGameState, setGamePhase } = useGameStore();
   const { setPlayerData } = usePlayerStore();
+  const { play: playJoinSound } = useSound('/sounds/join.mp3');
 
   useEffect(() => {
     on(Events.GAME_ROOM_JOINED, (roomData: GameState) => {
       setIsLoading(false);
       setGameState(roomData);
       if (roomData) {
+        playJoinSound();
         navigate(`/game/${roomData?.gameId}`);
       }
     });

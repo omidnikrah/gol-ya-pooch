@@ -1,5 +1,5 @@
 import { GamePhases } from '@gol-ya-pooch/frontend/enums';
-import { useSocket } from '@gol-ya-pooch/frontend/hooks';
+import { useSocket, useSound } from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import {
   Events,
@@ -16,6 +16,7 @@ export const JoinGameRoomModal = () => {
   const { emit, on, off } = useSocket();
   const { gameState, setGameState, setGamePhase } = useGameStore();
   const { setPlayerData } = usePlayerStore();
+  const { play: playJoinSound } = useSound('/sounds/join.mp3');
 
   const emptyTeams = useMemo(() => {
     if (!gameState) return [];
@@ -42,6 +43,7 @@ export const JoinGameRoomModal = () => {
     });
 
     on(Events.PLAYER_JOINED, (player: PrivatePlayerData) => {
+      playJoinSound();
       setPlayerData(player);
       setGamePhase(GamePhases.WAITING_FOR_READY);
     });

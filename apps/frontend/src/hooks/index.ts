@@ -5,3 +5,4 @@ export * from './useGameControls';
 export * from './useRequestEmptyPlay';
 export * from './useGuessHand';
 export * from './useLocalStorage';
+export * from './useSound';

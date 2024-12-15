@@ -1,6 +1,8 @@
-import { useSocket } from '@gol-ya-pooch/frontend/hooks';
+import { GamePhases } from '@gol-ya-pooch/frontend/enums';
+import { useSocket, useSound } from '@gol-ya-pooch/frontend/hooks';
+import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import { convertToPersianNumbers } from '@gol-ya-pooch/frontend/utils';
-import { Events, gameSize } from '@gol-ya-pooch/shared';
+import { Events, gameSize, PrivatePlayerData } from '@gol-ya-pooch/shared';
 import type { GameState } from '@gol-ya-pooch/shared';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
@@ -12,17 +14,28 @@ export const CreateGameModal = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { emit, on, off } = useSocket();
   const [, navigate] = useLocation();
+  const { setGameState, setGamePhase } = useGameStore();
+  const { setPlayerData } = usePlayerStore();
+  const { play: playJoinSound } = useSound('/sounds/join.mp3');
 
   useEffect(() => {
     on(Events.GAME_ROOM_CREATED, (roomData: GameState) => {
       setIsLoading(false);
+      setGameState(roomData);
       if (roomData) {
+        playJoinSound();
         navigate(`/game/${roomData?.gameId}`);
       }
     });
 
+    on(Events.PLAYER_JOINED, (player: PrivatePlayerData) => {
+      setPlayerData(player);
+      setGamePhase(GamePhases.WAITING_FOR_READY);
+    });
+
     return () => {
       off(Events.GAME_ROOM_CREATED);
+      off(Events.PLAYER_JOINED);
     };
   }, []);
 
