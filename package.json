@@ -5,11 +5,14 @@
   "scripts": {
     "prepare": "husky"
   },
-  "private": true,
   "author": {
     "name": "Omid Nikrah",
     "email": "omidnikrah@gmail.com",
     "url": "https://omid.toys"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omidnikrah/gol-ya-pooch.git"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
