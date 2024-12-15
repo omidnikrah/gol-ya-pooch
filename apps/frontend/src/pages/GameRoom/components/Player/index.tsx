@@ -1,3 +1,4 @@
+import { GamePhases } from '@gol-ya-pooch/frontend/enums';
 import {
   useGuessHand,
   useRequestEmptyPlay,
@@ -20,11 +21,15 @@ interface IPlayer {
 }
 
 export const Player = ({ team, data, isJoined, position }: IPlayer) => {
-  const { playingPlayerId, gameState } = useGameStore();
+  const { playingPlayerId, gameState, phase } = useGameStore();
   const { requestEmptyPlay } = useRequestEmptyPlay();
   const { guessObjectLocation } = useGuessHand();
 
   const isPlaying = playingPlayerId === data?.id;
+  const phasesToShowReadyBadge = [
+    GamePhases.WAITING_FOR_PLAYERS,
+    GamePhases.WAITING_FOR_READY,
+  ];
 
   const handleRequestEmptyPlay = () => {
     if (data?.id) {
@@ -54,7 +59,7 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
         },
       )}
     >
-      {data?.isReady && (
+      {data?.isReady && phasesToShowReadyBadge.includes(phase) && (
         <span
           className={clsx(
             'absolute translate-x-1/2 right-1/2 bg-green-300 text-green-800 px-4 py-1 rounded-full',
