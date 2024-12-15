@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for commit guidelines.
 
+# [v1.2.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.1.3...v1.2.0) (2024-12-15)
+
+## ✨ New Features
+- [`de7802e`](https://github.com/omidnikrah/gol-ya-pooch/commit/de7802e)  feat: add sound effects to different parts of the game 
+
+
+
+# [1.2.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.1.3...v1.2.0) (2024-12-15)
+
 # [v1.1.3](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.1.2...v1.1.3) (2024-12-14)
 
 
