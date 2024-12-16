@@ -1,4 +1,8 @@
-import { GitHubLink, ToastProvider } from '@gol-ya-pooch/frontend/components';
+import {
+  GitHubLink,
+  MobileBanner,
+  ToastProvider,
+} from '@gol-ya-pooch/frontend/components';
 
 import { AppRouter } from './router';
 
@@ -7,6 +11,7 @@ const App = () => {
     <ToastProvider>
       <AppRouter />
       <GitHubLink />
+      <MobileBanner />
     </ToastProvider>
   );
 };
