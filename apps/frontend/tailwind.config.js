@@ -105,6 +105,12 @@ module.exports = {
         '.rotate-y-0': {
           transform: 'rotateY(0deg)',
         },
+        '.siblings-container': {
+          transition: 'opacity 200ms ease',
+        },
+        '.siblings-container:hover .sibling-item:not(:hover)': {
+          opacity: 0.2,
+        },
       });
     },
   ],

@@ -83,30 +83,30 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
         />
       )}
       {gameState?.currentTurn === team && position !== 'bottom' && (
-        <div className="z-10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 flex-col">
-          <button
-            type="button"
-            className="px-4 py-2 rounded-full appearance-none border-none border-0 bg-primary text-sm text-[#541718] translate-y-4"
-            onClick={handleRequestEmptyPlay}
-          >
-            درخواست خالی بازی
-          </button>
-          <div className="gap-2 flex">
+        <div className="z-10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center flex-col w-[310px] absolute siblings-container pointer-events-none">
+          <div className="w-full flex justify-between pointer-events-none">
             <button
               type="button"
-              className="px-4 py-2 rounded-full appearance-none border-none border-0 bg-[#d1754d] text-sm text-[#61291a] translate-y-4 hover:scale-110 transition-all"
+              className="rounded-full appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto"
               onClick={() => handleGuessObject('left')}
             >
-              چپ گل
+              <img src="/images/left-gol-btn.svg" alt="" />
             </button>
             <button
               type="button"
-              className="px-4 py-2 rounded-full appearance-none border-none border-0 bg-[#d1754d] text-sm text-[#61291a] translate-y-4 hover:scale-110 transition-all"
+              className="rounded-full appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto"
               onClick={() => handleGuessObject('right')}
             >
-              راست گل
+              <img src="/images/right-gol-btn.svg" alt="" />
             </button>
           </div>
+          <button
+            type="button"
+            className="rounded-full appearance-none border-none border-0 translate-y-[-29px] hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto"
+            onClick={handleRequestEmptyPlay}
+          >
+            <img src="/images/empty-play-btn.svg" alt="" />
+          </button>
         </div>
       )}
     </div>
