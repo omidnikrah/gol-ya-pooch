@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+const SPACE_KEY = 'Space';
+
 export const useKeyPress = (
   keyName: string | string[],
   callback: () => void,
@@ -7,7 +9,11 @@ export const useKeyPress = (
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const keys = Array.isArray(keyName) ? keyName : [keyName];
-      if (keys.includes(event.key)) {
+      const normalizedKeys = !keys.includes(SPACE_KEY)
+        ? keys
+        : keys.map((key) => (key === SPACE_KEY ? ' ' : key));
+
+      if (normalizedKeys.includes(event.key)) {
         callback();
       }
     };
