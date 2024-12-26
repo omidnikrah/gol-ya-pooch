@@ -92,7 +92,6 @@ export const CreateGameModal = () => {
                     { 'bg-secondary': selectedGameSize === size },
                   )}
                   onClick={() => handleSetGameSize(size)}
-                  disabled={size !== 2}
                 >
                   {convertToPersianNumbers(size)} نفره
                 </button>

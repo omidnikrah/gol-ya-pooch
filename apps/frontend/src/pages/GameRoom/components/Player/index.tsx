@@ -3,7 +3,7 @@ import {
   useGuessHand,
   useRequestEmptyPlay,
 } from '@gol-ya-pooch/frontend/hooks';
-import { useGameStore } from '@gol-ya-pooch/frontend/stores';
+import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import {
   HandPosition,
   Player as IPlayerData,
@@ -21,7 +21,8 @@ interface IPlayer {
 }
 
 export const Player = ({ team, data, isJoined, position }: IPlayer) => {
-  const { playingPlayerId, gameState, phase } = useGameStore();
+  const { playingPlayerId, gameState, phase, handFillingData } = useGameStore();
+  const { player } = usePlayerStore();
   const { requestEmptyPlay } = useRequestEmptyPlay();
   const { guessObjectLocation } = useGuessHand();
 
@@ -46,11 +47,84 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
   const splineFilePath = useMemo(() => {
     const shouldHandsOpen =
       !gameState?.currentTurn || team !== gameState?.currentTurn;
-    return `/models/${team === 'teamA' ? 'blue' : 'red'}-${position}-team-hands${isPlaying ? '-playing' : ''}${shouldHandsOpen ? '-open' : ''}.splinecode`;
-  }, [team, position, isPlaying, gameState]);
+
+    const shouldShowFillingHand =
+      phase === GamePhases.SPREADING_OBJECT &&
+      !shouldHandsOpen &&
+      [handFillingData?.fromPlayerId, handFillingData?.toPlayerId].includes(
+        data?.id,
+      );
+
+    let fillingHandDirection = '';
+
+    if (shouldShowFillingHand) {
+      const isTargetPlayer = data?.id === handFillingData?.toPlayerId;
+      const isDirectionLeft = handFillingData?.direction === 'left';
+
+      console.log('isTargetPlayer => ', isTargetPlayer);
+      console.log('isDirectionLeft => ', isDirectionLeft);
+
+      fillingHandDirection =
+        isTargetPlayer === isDirectionLeft ? 'right' : 'left';
+    }
+
+    return `/models/${team === 'teamA' ? 'blue' : 'red'}-${position}-team-hands${isPlaying ? '-playing' : ''}${shouldHandsOpen ? '-open' : ''}${shouldShowFillingHand ? `-fill-${fillingHandDirection}` : ''}.splinecode`;
+  }, [team, position, isPlaying, gameState, phase, handFillingData]);
+
+  const transformXValue = useMemo(() => {
+    const shouldHandsOpen =
+      !gameState?.currentTurn || team !== gameState?.currentTurn;
+
+    const shouldShowFillingHand =
+      phase === GamePhases.SPREADING_OBJECT &&
+      !shouldHandsOpen &&
+      [handFillingData?.fromPlayerId, handFillingData?.toPlayerId].includes(
+        data?.id,
+      );
+
+    if (!shouldShowFillingHand) {
+      return {
+        shouldShowFillingHand,
+        value: '',
+      };
+    }
+
+    const getFillingHandDirection = () => {
+      const { direction, toPlayerId } = handFillingData || {};
+      const isToPlayer = data?.id === toPlayerId;
+
+      if (direction === 'left') {
+        return isToPlayer ? 'right' : 'left';
+      } else {
+        return isToPlayer ? 'left' : 'right';
+      }
+    };
+
+    const fillingHandDirection = getFillingHandDirection();
+
+    const getTransformValue = (
+      direction: HandPosition,
+      pos: 'top' | 'bottom',
+    ) => {
+      const transformMap = {
+        'left-bottom': '-translate-x-2.5',
+        'left-top': 'translate-x-5',
+        'right-bottom': 'translate-x-2.5',
+        'right-top': '-translate-x-5',
+      };
+
+      return transformMap[`${direction}-${pos}`] || '';
+    };
+
+    return {
+      shouldShowFillingHand,
+      value: getTransformValue(fillingHandDirection, position),
+    };
+  }, [team, position, handFillingData, gameState]);
 
   return (
     <div
+      data-id={data?.id}
       className={clsx(
         'group w-full h-1/2 bg-purple-80 aspect-square relative flex justify-center',
         {
@@ -72,14 +146,26 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
           آماده
         </span>
       )}
+      {player?.id && player?.id === data?.id && (
+        <span className="absolute translate-x-1/2 right-1/2 bg-purple-80 text-white px-4 py-1 rounded-full translate-y-24">
+          شما
+        </span>
+      )}
       {data?.name}
       {isJoined && (
         <Spline
           scene={splineFilePath}
-          className={clsx('absolute flex justify-center !h-[120px]', {
-            'translate-y-6': position === 'bottom',
-            '-translate-y-6': position === 'top',
-          })}
+          style={{
+            overflow: 'visible clip',
+          }}
+          className={clsx(
+            'absolute flex justify-center !h-[120px] transition-transform z-10',
+            {
+              'translate-y-6': position === 'bottom',
+              '-translate-y-6': position === 'top',
+              [transformXValue.value]: transformXValue.shouldShowFillingHand,
+            },
+          )}
         />
       )}
       {gameState?.currentTurn === team && position !== 'bottom' && (

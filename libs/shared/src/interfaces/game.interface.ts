@@ -31,6 +31,7 @@ export interface IObjectLocation {
 export interface GameState {
   gameId: string;
   gameSize: GameSize;
+  gameMaster: Player['id'];
   currentTurn: TeamNames;
   objectLocation: IObjectLocation;
   round: number;
@@ -44,4 +45,10 @@ export interface FinishGamePayload {
   winnerTeam: TeamNames;
   finalScores: Scores;
   roundsPlayed: number;
+}
+
+export interface PlayerFillHand {
+  fromPlayerId: Player['id'];
+  toPlayerId: Player['id'];
+  direction: HandPosition;
 }

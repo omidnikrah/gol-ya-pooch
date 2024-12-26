@@ -21,6 +21,8 @@ export const Team = ({
   playerTeamName,
 }: ITeamProps) => {
   const playerPosition = teamName !== playerTeamName ? 'top' : 'bottom';
+  const teamMembers =
+    playerPosition === 'top' ? [...members].reverse() : members;
 
   const getWidthClassNames = () => {
     const positionWidth: Record<'top' | 'bottom', Record<number, string>> = {
@@ -28,9 +30,13 @@ export const Team = ({
       bottom: { 3: 'w-[90%]', 2: 'w-[60%]', 1: 'w-[30%]' },
     };
 
-    const colsClass = `grid-cols-${gameSize}`;
+    const colsClass: Record<number, string> = {
+      1: 'grid-cols-1',
+      2: 'grid-cols-2',
+      3: 'grid-cols-3',
+    };
 
-    return `${colsClass} ${positionWidth[playerPosition][gameSize]}`;
+    return `${colsClass[gameSize]} ${positionWidth[playerPosition][gameSize]}`;
   };
 
   return (
@@ -45,7 +51,7 @@ export const Team = ({
       )}
     >
       {Array.from({ length: Number(gameSize) }).map((_, index) => {
-        const member = members[index];
+        const member = teamMembers[index];
 
         return (
           <Player

@@ -1,5 +1,6 @@
 import { WsValidationExceptionFilter } from '@gol-ya-pooch/backend/common/filters/ws-exception.filter';
 import { GetRoomInfoDTO } from '@gol-ya-pooch/backend/modules/game/dto/get-room-info.dto';
+import { PlayerFillHandDTO } from '@gol-ya-pooch/backend/modules/game/dto/player-fill-hand.dto';
 import { PlayerPlayingDTO } from '@gol-ya-pooch/backend/modules/game/dto/player-playing.dto';
 import { RequestEmptyPlayDTO } from '@gol-ya-pooch/backend/modules/game/dto/request-empty-play.dto';
 import {
@@ -157,6 +158,10 @@ export class GameGateway
 
     if (objectLocation.playerId === client.id) {
       client.emit(Events.PLAYER_RECEIVE_OBJECT, objectLocation);
+    } else {
+      this.server
+        .to(objectLocation.playerId)
+        .emit(Events.PLAYER_RECEIVE_OBJECT, objectLocation);
     }
 
     // this.server.to(gameId).emit(Events.OBJECT_LOCATION_CHANGED, gameState);
@@ -215,5 +220,15 @@ export class GameGateway
   async handleRequestEmptyPlay(@MessageBody() data: RequestEmptyPlayDTO) {
     const { gameId, playerId } = data;
     this.server.to(gameId).emit(Events.REQUEST_EMPTY_PLAY, playerId);
+  }
+
+  @SubscribeMessage(Events.PLAYER_FILL_HAND)
+  async handlePlayerFillHand(@MessageBody() data: PlayerFillHandDTO) {
+    const { gameId, fromPlayerId, toPlayerId, direction } = data;
+    this.server.to(gameId).emit(Events.PLAYER_FILL_HAND, {
+      fromPlayerId,
+      toPlayerId,
+      direction,
+    });
   }
 }

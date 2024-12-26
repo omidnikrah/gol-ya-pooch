@@ -77,6 +77,7 @@ export class GameService {
     const initialState: GameState = {
       gameId,
       gameSize,
+      gameMaster: null,
       currentTurn: null,
       objectLocation: null,
       round: 1,
@@ -219,13 +220,14 @@ export class GameService {
     gameState.currentTurn = Math.random() < 0.5 ? 'teamA' : 'teamB';
 
     const teamMembers = gameState.teams[gameState.currentTurn].members;
+    const objectHolderId =
+      teamMembers[teamMembers.length === 1 ? 0 : teamMembers.length % 2].id;
+
+    gameState.gameMaster = objectHolderId;
 
     gameState.objectLocation = {
       hand: this.getHandPosition(),
-      playerId:
-        teamMembers[
-          Math.round(teamMembers.length === 1 ? 0 : teamMembers.length / 2)
-        ].id,
+      playerId: objectHolderId,
     };
 
     await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
@@ -291,14 +293,15 @@ export class GameService {
     }
 
     const teamMembers = gameState.teams[gameState.currentTurn].members;
+    const objectHolderId =
+      teamMembers[teamMembers.length === 1 ? 0 : teamMembers.length % 2].id;
 
     gameState.objectLocation = {
       hand: this.getHandPosition(),
-      playerId:
-        teamMembers[
-          Math.round(teamMembers.length === 1 ? 0 : teamMembers.length / 2)
-        ].id,
+      playerId: objectHolderId,
     };
+
+    gameState.gameMaster = objectHolderId;
 
     gameState.round += 1;
 

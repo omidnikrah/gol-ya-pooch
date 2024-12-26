@@ -111,6 +111,9 @@ module.exports = {
         '.siblings-container:hover .sibling-item:not(:hover)': {
           opacity: 0.2,
         },
+        '.overflow-unset': {
+          overflow: 'unset',
+        },
       });
     },
   ],
