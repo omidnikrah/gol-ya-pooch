@@ -67,7 +67,7 @@ export const JoinGameRoomModal = () => {
   if (!gameState || emptyTeams.length === 0) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#351351] bg-opacity-60 backdrop-blur-sm">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#351351] bg-opacity-60 backdrop-blur-sm z-20">
       <div className="w-[450px] p-8 bg-white rounded-2xl text-center">
         <h3 className="font-black text-xl text-primary">
           کدوم تیم میخوای جوین بشی؟

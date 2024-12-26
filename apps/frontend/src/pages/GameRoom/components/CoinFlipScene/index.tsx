@@ -52,7 +52,7 @@ export const CoinFlipScene = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={TRANSITION_CONFIG}
-        className="fixed inset-0 bg-purple-80 bg-opacity-90 flex items-center justify-center"
+        className="fixed inset-0 bg-purple-80 bg-opacity-90 flex items-center justify-center z-20"
       >
         {countdown > 0 && (
           <AnimatePresence>

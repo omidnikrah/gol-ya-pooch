@@ -9,7 +9,7 @@ export const FinishGameResultModal = () => {
   if (!finishGameResult) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#351351] bg-opacity-60 backdrop-blur-sm">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#351351] bg-opacity-60 backdrop-blur-sm z-20">
       <Realistic
         autorun={{ speed: 2, duration: 5000 }}
         className="z-10 absolute inset-0 w-full h-full"

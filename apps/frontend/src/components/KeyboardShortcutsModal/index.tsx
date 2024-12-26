@@ -10,7 +10,7 @@ export const KeyboardShortcutsModal = () => {
   if (isModalShown) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#351351] bg-opacity-60 backdrop-blur-sm z-10">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#351351] bg-opacity-60 backdrop-blur-sm z-20">
       <div className="w-[450px] p-8 bg-purple-80 rounded-2xl text-center flex flex-col gap-4">
         <h3 className="font-black text-xl text-primary">راهنمای بازی</h3>
         <div className="inline-flex shrink-0 rounded-full p-1 flex-col">
