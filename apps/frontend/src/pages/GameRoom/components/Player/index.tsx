@@ -61,9 +61,6 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
       const isTargetPlayer = data?.id === handFillingData?.toPlayerId;
       const isDirectionLeft = handFillingData?.direction === 'left';
 
-      console.log('isTargetPlayer => ', isTargetPlayer);
-      console.log('isDirectionLeft => ', isDirectionLeft);
-
       fillingHandDirection =
         isTargetPlayer === isDirectionLeft ? 'right' : 'left';
     }
