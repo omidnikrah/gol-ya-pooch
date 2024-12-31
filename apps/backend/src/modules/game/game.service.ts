@@ -317,7 +317,8 @@ export class GameService {
     gameState: PublicGameState;
     isGameFinished: boolean;
     isGuessCorrect: boolean;
-    objectLocation: IObjectLocation;
+    oldObjectLocation: IObjectLocation;
+    newObjectLocation: IObjectLocation;
   }> {
     await this.areTeamsReady(gameId);
 
@@ -326,6 +327,7 @@ export class GameService {
       playerId === gameState.objectLocation.playerId &&
       hand === gameState.objectLocation.hand;
     let isGameFinished = false;
+    const oldObjectLocation = gameState.objectLocation;
 
     if (isGuessCorrect) {
       gameState.currentTurn =
@@ -360,7 +362,8 @@ export class GameService {
 
     return {
       gameState: this.serializeGameState(gameState),
-      objectLocation: gameState.objectLocation,
+      newObjectLocation: gameState.objectLocation,
+      oldObjectLocation,
       isGameFinished,
       isGuessCorrect,
     };

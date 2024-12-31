@@ -180,8 +180,13 @@ export class GameGateway
     @ConnectedSocket() client: Socket,
   ) {
     const { gameId, playerId, hand, isFromEmptyHand } = data;
-    const { gameState, isGameFinished, isGuessCorrect, objectLocation } =
-      await this.gameService.guessObjectLocation(gameId, playerId, hand);
+    const {
+      gameState,
+      isGameFinished,
+      isGuessCorrect,
+      oldObjectLocation,
+      newObjectLocation,
+    } = await this.gameService.guessObjectLocation(gameId, playerId, hand);
 
     if (isGameFinished) {
       const finishedGamePayload: FinishGamePayload = {
@@ -196,14 +201,15 @@ export class GameGateway
         isGuessCorrect,
       });
     } else {
-      if (objectLocation.playerId === client.id) {
-        client.emit(Events.PLAYER_RECEIVE_OBJECT, objectLocation);
+      if (newObjectLocation.playerId === client.id) {
+        client.emit(Events.PLAYER_RECEIVE_OBJECT, newObjectLocation);
       }
 
       this.server.to(gameId).emit(Events.GUESS_LOCATION_RESULT, {
         gameState,
         isGuessCorrect,
         isFromEmptyHand,
+        oldObjectLocation,
       });
     }
   }

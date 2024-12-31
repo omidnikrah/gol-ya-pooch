@@ -4,7 +4,11 @@ import {
   useGuessHand,
   useRequestEmptyPlay,
 } from '@gol-ya-pooch/frontend/hooks';
-import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
+import {
+  useGameStore,
+  useMessagesStore,
+  usePlayerStore,
+} from '@gol-ya-pooch/frontend/stores';
 import {
   HandPosition,
   Player as IPlayerData,
@@ -12,6 +16,7 @@ import {
 } from '@gol-ya-pooch/shared';
 import Spline from '@splinetool/react-spline';
 import clsx from 'clsx';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo } from 'react';
 
 interface IPlayer {
@@ -25,6 +30,7 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
   const { playingPlayerId, gameState, phase, handFillingData, emptyHands } =
     useGameStore();
   const { player } = usePlayerStore();
+  const { messages } = useMessagesStore();
   const { requestEmptyPlay } = useRequestEmptyPlay();
   const { guessObjectLocation } = useGuessHand();
   const { requestEmptyHand } = useEmptyHand();
@@ -34,6 +40,10 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
     GamePhases.WAITING_FOR_PLAYERS,
     GamePhases.WAITING_FOR_READY,
   ];
+
+  const playerMessage = messages?.find(
+    (message) => message.playerId === data?.id,
+  );
 
   const handleRequestEmptyPlay = () => {
     if (data?.id) {
@@ -150,6 +160,36 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
         },
       )}
     >
+      <AnimatePresence>
+        {playerMessage && (
+          <motion.div
+            initial={{
+              translateY: position === 'bottom' ? 70 : -70,
+              scale: 0.8,
+              opacity: 0,
+            }}
+            animate={{
+              translateY: position === 'bottom' ? 80 : -80,
+              scale: 1,
+              opacity: 1,
+            }}
+            exit={{
+              translateY: position === 'bottom' ? 70 : -70,
+              scale: 0.8,
+              opacity: 0,
+            }}
+            className={clsx(
+              'absolute px-4 py-2 rounded-full bg-white flex items-center justify-center after:absolute after:size-3 after:rounded-sm after:bg-white after:rotate-45',
+              {
+                'after:-top-1.5': position === 'bottom',
+                'after:-bottom-1.5': position === 'top',
+              },
+            )}
+          >
+            {playerMessage.message}
+          </motion.div>
+        )}
+      </AnimatePresence>
       {data?.isReady && phasesToShowReadyBadge.includes(phase) && (
         <span
           className={clsx(
@@ -189,7 +229,7 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
         <>
           <div className="z-10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center flex-col w-[310px] absolute siblings-container pointer-events-none">
             {gameState.gameSize > 2 && (
-              <div className="z-10 flex shrink-0 opacity-0 group-hover:opacity-100 transition-opacity -translate-y-12 gap-1 siblings-container">
+              <div className="z-10 absolute top-0 flex shrink-0 opacity-0 group-hover:opacity-100 transition-opacity -translate-y-12 gap-1 siblings-container">
                 <button
                   type="button"
                   className="relative flex items-center justify-center appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item cursor-pointer pointer-events-auto"

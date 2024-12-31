@@ -1,6 +1,10 @@
 import { useToast } from '@gol-ya-pooch/frontend/components';
 import { GamePhases, Toasts } from '@gol-ya-pooch/frontend/enums';
-import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
+import {
+  useGameStore,
+  useMessagesStore,
+  usePlayerStore,
+} from '@gol-ya-pooch/frontend/stores';
 import { isItemInArray } from '@gol-ya-pooch/frontend/utils';
 import {
   Events,
@@ -34,6 +38,7 @@ export const useGameControls = () => {
     resetEmptyHands,
   } = useGameStore();
   const { player, setObjectLocation } = usePlayerStore();
+  const { setMessage } = useMessagesStore();
   const { emit, on, off } = useSocket();
   const { showToast, dismissToastByName } = useToast();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -170,6 +175,7 @@ export const useGameControls = () => {
         gameState: PublicGameState;
         isGuessCorrect: boolean;
         isFromEmptyHand: boolean;
+        oldObjectLocation: IObjectLocation;
       }) => {
         if (data.isGuessCorrect) {
           showToast('حدس گل درست بود 🎉', 5000);
@@ -179,6 +185,14 @@ export const useGameControls = () => {
             data.isFromEmptyHand ? 'گل رو پوچ کردی!' : 'دست گل نبود',
             5000,
           );
+
+          const persianHandPosition =
+            data.oldObjectLocation.hand === 'left' ? 'چپ' : 'راست';
+
+          setMessage({
+            playerId: data.oldObjectLocation.playerId,
+            message: `توپ دست ${persianHandPosition} من بود 😎`,
+          });
         }
 
         if (data.gameState.gameSize > 2) {
