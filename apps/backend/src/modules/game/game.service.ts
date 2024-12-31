@@ -81,6 +81,7 @@ export class GameService {
       currentTurn: null,
       objectLocation: null,
       round: 1,
+      emptyPlays: gameSize / 2,
       scores: {
         teamA: 0,
         teamB: 0,
@@ -263,6 +264,51 @@ export class GameService {
     };
   }
 
+  async emptyPlayerHand(
+    gameId: GameState['gameId'],
+    playerId: Player['id'],
+    hand: HandPosition | 'both',
+  ): Promise<{
+    canEmptyPlay: boolean;
+    hasObjectInHand: boolean;
+    objectLocation: IObjectLocation;
+  }> {
+    const gameState = await this.getGameState(gameId);
+
+    if (gameState.emptyPlays <= 0) {
+      return {
+        objectLocation: null,
+        canEmptyPlay: false,
+        hasObjectInHand: false,
+      };
+    }
+
+    const hasObjectInHand =
+      gameState.objectLocation.playerId === playerId &&
+      (hand === 'both' || gameState.objectLocation.hand === hand);
+
+    if (hasObjectInHand) {
+      return {
+        objectLocation: gameState.objectLocation,
+        canEmptyPlay: false,
+        hasObjectInHand: true,
+      };
+    }
+
+    gameState.emptyPlays--;
+
+    await this.redisClient.set(
+      `game:${gameState.gameId}`,
+      JSON.stringify(gameState),
+    );
+
+    return {
+      objectLocation: null,
+      canEmptyPlay: true,
+      hasObjectInHand: false,
+    };
+  }
+
   async guessObjectLocation(
     gameId: GameState['gameId'],
     playerId: Player['id'],
@@ -276,10 +322,10 @@ export class GameService {
     await this.areTeamsReady(gameId);
 
     const gameState = await this.getGameState(gameId);
-    let isGameFinished = false;
     const isGuessCorrect =
       playerId === gameState.objectLocation.playerId &&
       hand === gameState.objectLocation.hand;
+    let isGameFinished = false;
 
     if (isGuessCorrect) {
       gameState.currentTurn =
@@ -305,7 +351,12 @@ export class GameService {
 
     gameState.round += 1;
 
-    await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
+    gameState.emptyPlays = gameState.gameSize / 2;
+
+    await this.redisClient.set(
+      `game:${gameState.gameId}`,
+      JSON.stringify(gameState),
+    );
 
     return {
       gameState: this.serializeGameState(gameState),

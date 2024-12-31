@@ -1,6 +1,7 @@
 import { GamePhases } from '@gol-ya-pooch/frontend/enums';
 import {
   FinishGamePayload,
+  HandPosition,
   Player,
   PlayerFillHand,
   PublicGameState,
@@ -15,6 +16,7 @@ interface GameStore {
   requestedPlayerIdToEmptyPlay: Player['id'] | null;
   finishGameResult: FinishGamePayload | null;
   handFillingData: PlayerFillHand | null;
+  emptyHands: Record<Player['id'], HandPosition | 'both'> | null;
 
   setGameState: (state: PublicGameState) => void;
   setGamePhase: (phase: GamePhases) => void;
@@ -22,6 +24,8 @@ interface GameStore {
   setRequestedPlayerIdToEmptyPlay: (playerId: Player['id'] | null) => void;
   setFinishGameResult: (gameResult: FinishGamePayload | null) => void;
   setHandFillingData: (handFillingData: PlayerFillHand | null) => void;
+  setEmptyHand: (playerId: Player['id'], hand: HandPosition | 'both') => void;
+  resetEmptyHands: () => void;
 }
 
 export const useGameStore = create(
@@ -32,6 +36,7 @@ export const useGameStore = create(
     requestedPlayerIdToEmptyPlay: null,
     finishGameResult: null,
     handFillingData: null,
+    emptyHands: null,
 
     setGameState: (data) => set(() => ({ gameState: data })),
     setGamePhase: (phase) => set(() => ({ phase: phase })),
@@ -42,6 +47,19 @@ export const useGameStore = create(
     setFinishGameResult: (gameResult) =>
       set(() => ({ finishGameResult: gameResult })),
     setHandFillingData: (handFillingData) => set(() => ({ handFillingData })),
+    setEmptyHand: (playerId, hand) =>
+      set((state) => {
+        const currentHandState = state.emptyHands?.[playerId];
+
+        return {
+          emptyHands: {
+            ...(state.emptyHands || {}),
+            [playerId]:
+              currentHandState && hand !== currentHandState ? 'both' : hand,
+          },
+        };
+      }),
+    resetEmptyHands: () => set(() => ({ emptyHands: null })),
   })),
 );
 

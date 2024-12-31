@@ -35,6 +35,7 @@ export interface GameState {
   currentTurn: TeamNames;
   objectLocation: IObjectLocation;
   round: number;
+  emptyPlays: number;
   scores: Scores;
   teams: Teams;
 }

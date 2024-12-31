@@ -1,5 +1,6 @@
 import { GamePhases } from '@gol-ya-pooch/frontend/enums';
 import {
+  useEmptyHand,
   useGuessHand,
   useRequestEmptyPlay,
 } from '@gol-ya-pooch/frontend/hooks';
@@ -21,10 +22,12 @@ interface IPlayer {
 }
 
 export const Player = ({ team, data, isJoined, position }: IPlayer) => {
-  const { playingPlayerId, gameState, phase, handFillingData } = useGameStore();
+  const { playingPlayerId, gameState, phase, handFillingData, emptyHands } =
+    useGameStore();
   const { player } = usePlayerStore();
   const { requestEmptyPlay } = useRequestEmptyPlay();
   const { guessObjectLocation } = useGuessHand();
+  const { requestEmptyHand } = useEmptyHand();
 
   const isPlaying = playingPlayerId === data?.id;
   const phasesToShowReadyBadge = [
@@ -65,8 +68,21 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
         isTargetPlayer === isDirectionLeft ? 'right' : 'left';
     }
 
-    return `/models/${team === 'teamA' ? 'blue' : 'red'}-${position}-team-hands${isPlaying ? '-playing' : ''}${shouldHandsOpen ? '-open' : ''}${shouldShowFillingHand ? `-fill-${fillingHandDirection}` : ''}.splinecode`;
-  }, [team, position, isPlaying, gameState, phase, handFillingData]);
+    const shouldPlayerEmptyHand = !!emptyHands?.[data!.id];
+    const playerEmptyHandPosition = shouldPlayerEmptyHand
+      ? emptyHands[data!.id]
+      : '';
+
+    return `/models/${team === 'teamA' ? 'blue' : 'red'}-${position}-team-hands${isPlaying ? '-playing' : ''}${shouldHandsOpen ? '-open' : ''}${shouldShowFillingHand ? `-fill-${fillingHandDirection}` : ''}${shouldPlayerEmptyHand ? `-empty-${playerEmptyHandPosition}` : ''}.splinecode`;
+  }, [
+    team,
+    position,
+    isPlaying,
+    gameState,
+    phase,
+    handFillingData,
+    emptyHands,
+  ]);
 
   const transformXValue = useMemo(() => {
     const shouldHandsOpen =
@@ -119,6 +135,10 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
     };
   }, [team, position, handFillingData, gameState]);
 
+  const handleEmptyHand = (position: HandPosition | 'both') => {
+    requestEmptyHand(data!.id, position);
+  };
+
   return (
     <div
       data-id={data?.id}
@@ -166,31 +186,67 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
         />
       )}
       {gameState?.currentTurn === team && position !== 'bottom' && (
-        <div className="z-10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center flex-col w-[310px] absolute siblings-container pointer-events-none">
-          <div className="w-full flex justify-between pointer-events-none">
+        <>
+          <div className="z-10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center flex-col w-[310px] absolute siblings-container pointer-events-none">
+            {gameState.gameSize > 2 && (
+              <div className="z-10 flex shrink-0 opacity-0 group-hover:opacity-100 transition-opacity -translate-y-12 gap-1 siblings-container">
+                <button
+                  type="button"
+                  className="relative flex items-center justify-center appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item cursor-pointer pointer-events-auto"
+                  onClick={() => handleEmptyHand('left')}
+                >
+                  <img src="/images/btn-shape-right.svg" alt="" />
+                  <span className="absolute -mt-1.5 text-white font-bold text-sm">
+                    چپت پوچ
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="relative flex items-center justify-center appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item cursor-pointer pointer-events-auto"
+                  onClick={() => handleEmptyHand('both')}
+                >
+                  <img src="/images/btn-shape-center.svg" alt="" />
+                  <span className="absolute -mt-1.5 text-white font-bold text-sm">
+                    جفت پوچ
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="relative flex items-center justify-center appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item cursor-pointer pointer-events-auto"
+                  onClick={() => handleEmptyHand('right')}
+                >
+                  <img src="/images/btn-shape-left.svg" alt="" />
+                  <span className="absolute -mt-1.5 text-white font-bold text-sm">
+                    راستت پوچ
+                  </span>
+                </button>
+              </div>
+            )}
+            <div className="w-full flex justify-between pointer-events-none">
+              <button
+                type="button"
+                className="rounded-full appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto"
+                onClick={() => handleGuessObject('left')}
+              >
+                <img src="/images/left-gol-btn.svg" alt="" />
+              </button>
+              <button
+                type="button"
+                className="rounded-full appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto"
+                onClick={() => handleGuessObject('right')}
+              >
+                <img src="/images/right-gol-btn.svg" alt="" />
+              </button>
+            </div>
             <button
               type="button"
-              className="rounded-full appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto"
-              onClick={() => handleGuessObject('left')}
+              className="rounded-full appearance-none border-none border-0 translate-y-[-29px] hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto"
+              onClick={handleRequestEmptyPlay}
             >
-              <img src="/images/left-gol-btn.svg" alt="" />
-            </button>
-            <button
-              type="button"
-              className="rounded-full appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto"
-              onClick={() => handleGuessObject('right')}
-            >
-              <img src="/images/right-gol-btn.svg" alt="" />
+              <img src="/images/empty-play-btn.svg" alt="" />
             </button>
           </div>
-          <button
-            type="button"
-            className="rounded-full appearance-none border-none border-0 translate-y-[-29px] hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto"
-            onClick={handleRequestEmptyPlay}
-          >
-            <img src="/images/empty-play-btn.svg" alt="" />
-          </button>
-        </div>
+        </>
       )}
     </div>
   );

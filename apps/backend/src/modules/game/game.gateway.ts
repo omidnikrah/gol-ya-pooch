@@ -1,5 +1,6 @@
 import { WsValidationExceptionFilter } from '@gol-ya-pooch/backend/common/filters/ws-exception.filter';
 import { GetRoomInfoDTO } from '@gol-ya-pooch/backend/modules/game/dto/get-room-info.dto';
+import { PlayerEmptyHandDTO } from '@gol-ya-pooch/backend/modules/game/dto/player-empty-hand.dto';
 import { PlayerFillHandDTO } from '@gol-ya-pooch/backend/modules/game/dto/player-fill-hand.dto';
 import { PlayerPlayingDTO } from '@gol-ya-pooch/backend/modules/game/dto/player-playing.dto';
 import { RequestEmptyPlayDTO } from '@gol-ya-pooch/backend/modules/game/dto/request-empty-play.dto';
@@ -178,7 +179,7 @@ export class GameGateway
     @MessageBody() data: GuessObjectLocationDTO,
     @ConnectedSocket() client: Socket,
   ) {
-    const { gameId, playerId, hand } = data;
+    const { gameId, playerId, hand, isFromEmptyHand } = data;
     const { gameState, isGameFinished, isGuessCorrect, objectLocation } =
       await this.gameService.guessObjectLocation(gameId, playerId, hand);
 
@@ -199,9 +200,11 @@ export class GameGateway
         client.emit(Events.PLAYER_RECEIVE_OBJECT, objectLocation);
       }
 
-      this.server
-        .to(gameId)
-        .emit(Events.GUESS_LOCATION_RESULT, { gameState, isGuessCorrect });
+      this.server.to(gameId).emit(Events.GUESS_LOCATION_RESULT, {
+        gameState,
+        isGuessCorrect,
+        isFromEmptyHand,
+      });
     }
   }
 
@@ -230,5 +233,40 @@ export class GameGateway
       toPlayerId,
       direction,
     });
+  }
+
+  @SubscribeMessage(Events.REQUEST_EMPTY_HAND)
+  async handlePlayerEmptyHand(
+    @MessageBody() data: PlayerEmptyHandDTO,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const { gameId, playerId, hand } = data;
+
+    const { canEmptyPlay, hasObjectInHand, objectLocation } =
+      await this.gameService.emptyPlayerHand(gameId, playerId, hand);
+
+    if (hasObjectInHand) {
+      await this.handleGuessObjectLocation(
+        {
+          gameId,
+          playerId,
+          hand: objectLocation.hand === 'left' ? 'right' : 'left',
+          isFromEmptyHand: true,
+        },
+        client,
+      );
+      return;
+    }
+
+    if (canEmptyPlay) {
+      this.server.to(gameId).emit(Events.PLAYER_EMPTY_HAND, {
+        playerId,
+        hand,
+      });
+    } else {
+      this.server.to(gameId).emit(Events.REACH_EMPTY_HANDS_LIMIT, {
+        message: 'خالی بازی‌هاتون تموم شده.',
+      });
+    }
   }
 }

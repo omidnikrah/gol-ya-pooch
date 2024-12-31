@@ -1,5 +1,5 @@
 import type { GameState, HandPosition, Player } from '@gol-ya-pooch/shared';
-import { IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class GuessObjectLocationDTO {
   @IsString()
@@ -10,4 +10,8 @@ export class GuessObjectLocationDTO {
 
   @IsString()
   hand: HandPosition;
+
+  @IsBoolean()
+  @IsOptional()
+  isFromEmptyHand?: boolean;
 }

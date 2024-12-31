@@ -18,7 +18,8 @@ export const Events = {
   REQUEST_EMPTY_HAND: 'game:opponent:requestEmptyHand',
   REQUEST_EMPTY_PLAY: 'game:opponent:requestEmptyPlay',
 
-  HAND_EMPTIED: 'game:player:handEmptied',
+  REACH_EMPTY_HANDS_LIMIT: 'game:team:reachEmptyHandsLimit',
+
   PLAYER_JOINED: 'game:player:joined',
   PLAYER_LEFT: 'game:player:left',
   PLAYER_READY: 'game:player:ready',
@@ -26,6 +27,7 @@ export const Events = {
   PLAYER_PLAYING: 'game:player:playing',
   PLAYER_RECEIVE_OBJECT: 'game:player:receiveObject',
   PLAYER_FILL_HAND: 'game:player:fillHand',
+  PLAYER_EMPTY_HAND: 'game:player:emptyHand',
 
   GAME_EXCEPTION: 'exception',
 };

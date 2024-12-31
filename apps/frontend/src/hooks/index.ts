@@ -6,3 +6,4 @@ export * from './useRequestEmptyPlay';
 export * from './useGuessHand';
 export * from './useLocalStorage';
 export * from './useSound';
+export * from './useEmptyHand';

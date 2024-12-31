@@ -30,6 +30,8 @@ export const useGameControls = () => {
     setGamePhase,
     setFinishGameResult,
     setHandFillingData,
+    setEmptyHand,
+    resetEmptyHands,
   } = useGameStore();
   const { player, setObjectLocation } = usePlayerStore();
   const { emit, on, off } = useSocket();
@@ -164,20 +166,29 @@ export const useGameControls = () => {
 
     on(
       Events.GUESS_LOCATION_RESULT,
-      (data: { gameState: PublicGameState; isGuessCorrect: boolean }) => {
+      (data: {
+        gameState: PublicGameState;
+        isGuessCorrect: boolean;
+        isFromEmptyHand: boolean;
+      }) => {
         if (data.isGuessCorrect) {
           showToast('حدس گل درست بود 🎉', 5000);
         } else {
           playBuzzSound();
-          showToast('دست گل نبود', 5000);
+          showToast(
+            data.isFromEmptyHand ? 'گل رو پوچ کردی!' : 'دست گل نبود',
+            5000,
+          );
         }
-        setGameState(data.gameState);
 
         if (data.gameState.gameSize > 2) {
+          resetEmptyHands();
           setGamePhase(GamePhases.SPREADING_OBJECT);
           filledHands.current = [];
           targetFillHandData.current = null;
         }
+
+        setGameState(data.gameState);
       },
     );
 
@@ -190,12 +201,26 @@ export const useGameControls = () => {
       },
     );
 
+    on(Events.REACH_EMPTY_HANDS_LIMIT, (data: { message: string }) => {
+      showToast(data.message, 3000);
+    });
+
     return () => {
       off(Events.GAME_STATE_UPDATED);
       off(Events.PLAYER_RECEIVE_OBJECT);
       off(Events.GUESS_LOCATION_RESULT);
+      off(Events.REACH_EMPTY_HANDS_LIMIT);
     };
   }, []);
+
+  useEffect(() => {
+    if (
+      phase === GamePhases.SPREADING_OBJECT &&
+      player?.id === gameState?.gameMaster
+    ) {
+      showToast('اوستا گل رو پخش کن');
+    }
+  }, [phase, player, gameState]);
 
   useEffect(() => {
     on(Events.PLAYER_FILL_HAND, (data: PlayerFillHand) => {
@@ -231,6 +256,13 @@ export const useGameControls = () => {
     on(Events.REQUEST_EMPTY_PLAY, (playerId: Player['id']) => {
       setRequestedPlayerIdToEmptyPlay(playerId);
     });
+
+    on(
+      Events.PLAYER_EMPTY_HAND,
+      (data: { playerId: Player['id']; hand: HandPosition }) => {
+        setEmptyHand(data.playerId, data.hand);
+      },
+    );
 
     on(Events.PLAYER_PLAYING, (playerId: Player['id']) => {
       setPlayingPlayerId(playerId);
