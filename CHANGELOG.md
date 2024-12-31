@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for commit guidelines.
 
+# [v1.3.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.2.4...v1.3.0) (2024-12-26)
+
+## ✨ New Features
+- [`3f7bb33`](https://github.com/omidnikrah/gol-ya-pooch/commit/3f7bb33)  feat: implement basic version of the 4 and 6 players rooms 
+
+
+
+# [1.3.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.2.4...v1.3.0) (2024-12-26)
+
 # [v1.2.4](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.2.3...v1.2.4) (2024-12-16)
 
 
