@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for commit guidelines.
 
+# [v1.5.1](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.5.0...v1.5.1) (2025-01-01)
+
+## 🐛 Bug Fixes
+- [`c82ab77`](https://github.com/omidnikrah/gol-ya-pooch/commit/c82ab77)  fix: fix empty plays limitation 
+
+
+
+## [1.5.1](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.5.0...v1.5.1) (2025-01-01)
+
 # [v1.5.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.4.0...v1.5.0) (2024-12-31)
 
 ## ✨ New Features
