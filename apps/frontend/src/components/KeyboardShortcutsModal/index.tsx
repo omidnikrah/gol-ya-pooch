@@ -1,5 +1,9 @@
 import { useLocalStorage } from '@gol-ya-pooch/frontend/hooks';
-import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/16/solid';
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  MinusIcon,
+} from '@heroicons/react/16/solid';
 
 export const KeyboardShortcutsModal = () => {
   const [isModalShown, setIsModalShown] = useLocalStorage<boolean>(
@@ -15,7 +19,8 @@ export const KeyboardShortcutsModal = () => {
         <h3 className="font-black text-xl text-primary">راهنمای بازی</h3>
         <div className="inline-flex shrink-0 rounded-full p-1 flex-col">
           <span className="text-white text-sm">
-            برای بازی کردن باید از arrow keyهای کیبورد استفاده کنی:
+            برای پخش کردن گل و خالی بازی کردن باید از Arrow Keyهای کیبورد
+            استفاده کنی:
           </span>
           <div className="my-14 flex flex-row items-center justify-center gap-5">
             <div className="size-14 rounded-lg shadow-[0_3px_0_2px_#adadad] bg-[#e7e7e7] p-2 inline-flex items-center justify-center">
@@ -30,6 +35,21 @@ export const KeyboardShortcutsModal = () => {
                 width={36}
                 height={36}
                 className="fill-purple-80"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="inline-flex shrink-0 rounded-full p-1 flex-col">
+          <span className="text-white text-sm">
+            اگر اوستا بودی و موقع پخش گل خواستی گل رو بدی به بازیکن، باید دکمه
+            Space کیبوردت رو بزنی:
+          </span>
+          <div className="my-14 flex flex-row items-center justify-center gap-5">
+            <div className="h-14 w-full rounded-lg shadow-[0_3px_0_2px_#adadad] bg-[#e7e7e7] p-2 inline-flex items-center justify-center">
+              <MinusIcon
+                width={36}
+                height={36}
+                className="fill-purple-80 mt-4"
               />
             </div>
           </div>
