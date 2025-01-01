@@ -18,7 +18,7 @@ export const Events = {
   REQUEST_EMPTY_HAND: 'game:opponent:requestEmptyHand',
   REQUEST_EMPTY_PLAY: 'game:opponent:requestEmptyPlay',
 
-  REACH_EMPTY_HANDS_LIMIT: 'game:team:reachEmptyHandsLimit',
+  REACH_EMPTY_PLAYS_LIMIT: 'game:team:reachEmptyPlaysLimit',
 
   PLAYER_JOINED: 'game:player:joined',
   PLAYER_LEFT: 'game:player:left',

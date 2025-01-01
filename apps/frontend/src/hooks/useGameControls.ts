@@ -60,6 +60,8 @@ export const useGameControls = () => {
       const playerSiblingsInfo = isItemInArray(teamMembers!, 'id', player.id);
       let toPlayerId = '';
 
+      dismissToastByName(Toasts.SPREAD_OBJECT);
+
       switch (hand) {
         case 'left':
           if (playerSiblingsInfo.hasLeft) {
@@ -87,6 +89,7 @@ export const useGameControls = () => {
           fromPlayerId: player?.id,
           toPlayerId,
           direction: hand,
+          filledHands: filledHands.current,
         });
       } else {
         showToast('دست این بازیکن رو پر کردی');
@@ -95,7 +98,10 @@ export const useGameControls = () => {
   };
 
   const handleEmitPlaying = (hand: HandPosition) => {
-    if (requestedPlayerIdToEmptyPlay === player?.id) {
+    if (
+      requestedPlayerIdToEmptyPlay === player?.id &&
+      phase === GamePhases.PLAYING
+    ) {
       playEmptyPlayingSound();
       setIsPlaying(true);
 
@@ -215,7 +221,7 @@ export const useGameControls = () => {
       },
     );
 
-    on(Events.REACH_EMPTY_HANDS_LIMIT, (data: { message: string }) => {
+    on(Events.REACH_EMPTY_PLAYS_LIMIT, (data: { message: string }) => {
       showToast(data.message, 3000);
     });
 
@@ -223,7 +229,7 @@ export const useGameControls = () => {
       off(Events.GAME_STATE_UPDATED);
       off(Events.PLAYER_RECEIVE_OBJECT);
       off(Events.GUESS_LOCATION_RESULT);
-      off(Events.REACH_EMPTY_HANDS_LIMIT);
+      off(Events.REACH_EMPTY_PLAYS_LIMIT);
     };
   }, []);
 
@@ -232,13 +238,14 @@ export const useGameControls = () => {
       phase === GamePhases.SPREADING_OBJECT &&
       player?.id === gameState?.gameMaster
     ) {
-      showToast('اوستا گل رو پخش کن');
+      showToast('اوستا گل رو پخش کن', 5000, true, Toasts.SPREAD_OBJECT);
     }
   }, [phase, player, gameState]);
 
   useEffect(() => {
     on(Events.PLAYER_FILL_HAND, (data: PlayerFillHand) => {
       setHandFillingData(data);
+      filledHands.current = data.filledHands;
       setTimeout(() => {
         setHandFillingData(null);
 

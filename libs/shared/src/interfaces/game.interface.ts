@@ -52,4 +52,5 @@ export interface PlayerFillHand {
   fromPlayerId: Player['id'];
   toPlayerId: Player['id'];
   direction: HandPosition;
+  filledHands: Player['id'][];
 }

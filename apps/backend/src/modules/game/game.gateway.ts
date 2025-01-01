@@ -228,16 +228,26 @@ export class GameGateway
   @SubscribeMessage(Events.REQUEST_EMPTY_PLAY)
   async handleRequestEmptyPlay(@MessageBody() data: RequestEmptyPlayDTO) {
     const { gameId, playerId } = data;
-    this.server.to(gameId).emit(Events.REQUEST_EMPTY_PLAY, playerId);
+
+    const canEmptyPlay = await this.gameService.validateEmptyPlay(gameId);
+
+    if (canEmptyPlay) {
+      this.server.to(gameId).emit(Events.REQUEST_EMPTY_PLAY, playerId);
+    } else {
+      this.server.to(gameId).emit(Events.REACH_EMPTY_PLAYS_LIMIT, {
+        message: 'خالی بازی‌هاتون تموم شده.',
+      });
+    }
   }
 
   @SubscribeMessage(Events.PLAYER_FILL_HAND)
   async handlePlayerFillHand(@MessageBody() data: PlayerFillHandDTO) {
-    const { gameId, fromPlayerId, toPlayerId, direction } = data;
+    const { gameId, fromPlayerId, toPlayerId, direction, filledHands } = data;
     this.server.to(gameId).emit(Events.PLAYER_FILL_HAND, {
       fromPlayerId,
       toPlayerId,
       direction,
+      filledHands,
     });
   }
 
@@ -248,7 +258,7 @@ export class GameGateway
   ) {
     const { gameId, playerId, hand } = data;
 
-    const { canEmptyPlay, hasObjectInHand, objectLocation } =
+    const { hasObjectInHand, objectLocation } =
       await this.gameService.emptyPlayerHand(gameId, playerId, hand);
 
     if (hasObjectInHand) {
@@ -264,15 +274,9 @@ export class GameGateway
       return;
     }
 
-    if (canEmptyPlay) {
-      this.server.to(gameId).emit(Events.PLAYER_EMPTY_HAND, {
-        playerId,
-        hand,
-      });
-    } else {
-      this.server.to(gameId).emit(Events.REACH_EMPTY_HANDS_LIMIT, {
-        message: 'خالی بازی‌هاتون تموم شده.',
-      });
-    }
+    this.server.to(gameId).emit(Events.PLAYER_EMPTY_HAND, {
+      playerId,
+      hand,
+    });
   }
 }

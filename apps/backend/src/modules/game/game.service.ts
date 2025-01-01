@@ -269,19 +269,10 @@ export class GameService {
     playerId: Player['id'],
     hand: HandPosition | 'both',
   ): Promise<{
-    canEmptyPlay: boolean;
     hasObjectInHand: boolean;
     objectLocation: IObjectLocation;
   }> {
     const gameState = await this.getGameState(gameId);
-
-    if (gameState.emptyPlays <= 0) {
-      return {
-        objectLocation: null,
-        canEmptyPlay: false,
-        hasObjectInHand: false,
-      };
-    }
 
     const hasObjectInHand =
       gameState.objectLocation.playerId === playerId &&
@@ -290,21 +281,12 @@ export class GameService {
     if (hasObjectInHand) {
       return {
         objectLocation: gameState.objectLocation,
-        canEmptyPlay: false,
         hasObjectInHand: true,
       };
     }
 
-    gameState.emptyPlays--;
-
-    await this.redisClient.set(
-      `game:${gameState.gameId}`,
-      JSON.stringify(gameState),
-    );
-
     return {
       objectLocation: null,
-      canEmptyPlay: true,
       hasObjectInHand: false,
     };
   }
@@ -367,6 +349,23 @@ export class GameService {
       isGameFinished,
       isGuessCorrect,
     };
+  }
+
+  async validateEmptyPlay(gameId: GameState['gameId']): Promise<boolean> {
+    const gameState = await this.getGameState(gameId);
+
+    console.log(gameState.emptyPlays);
+
+    if (gameState.emptyPlays === 0) return false;
+
+    gameState.emptyPlays--;
+
+    await this.redisClient.set(
+      `game:${gameState.gameId}`,
+      JSON.stringify(gameState),
+    );
+
+    return true;
   }
 
   async getRoomInfo(gameId: GameState['gameId']): Promise<PublicGameState> {

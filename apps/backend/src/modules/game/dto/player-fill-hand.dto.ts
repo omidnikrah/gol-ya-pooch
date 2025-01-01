@@ -1,5 +1,5 @@
 import type { GameState, HandPosition, Player } from '@gol-ya-pooch/shared';
-import { IsString } from 'class-validator';
+import { IsArray, IsString } from 'class-validator';
 
 export class PlayerFillHandDTO {
   @IsString()
@@ -13,4 +13,7 @@ export class PlayerFillHandDTO {
 
   @IsString()
   direction: HandPosition;
+
+  @IsArray()
+  filledHands: Player['id'][];
 }
