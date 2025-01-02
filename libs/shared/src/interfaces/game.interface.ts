@@ -38,6 +38,7 @@ export interface GameState {
   emptyPlays: number;
   scores: Scores;
   teams: Teams;
+  lastActivity: number;
 }
 
 export type PublicGameState = Omit<GameState, 'objectLocation'>;

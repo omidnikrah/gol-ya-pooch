@@ -9,6 +9,7 @@ import {
   TeamNames,
 } from '@gol-ya-pooch/shared';
 import { Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { WsException } from '@nestjs/websockets';
 import Redis from 'ioredis';
 import { v4 as uuidV4 } from 'uuid';
@@ -90,11 +91,10 @@ export class GameService {
         teamA: { members: [] },
         teamB: { members: [] },
       },
+      lastActivity: Date.now(),
     };
 
-    await this.redisClient.set(`game:${gameId}`, JSON.stringify(initialState));
-
-    await this.redisClient.sadd('gameRooms', gameId);
+    await this.updateGameStateOnRedis(gameId, initialState);
 
     return this.serializeGameState(initialState);
   }
@@ -134,10 +134,7 @@ export class GameService {
     team.members.push(newPlayer);
 
     await this.redisClient.set(`player:${playerId}`, gameRoom.gameId);
-    await this.redisClient.set(
-      `game:${gameRoom.gameId}`,
-      JSON.stringify(gameState),
-    );
+    await this.updateGameStateOnRedis(gameRoom.gameId, gameState);
 
     return {
       gameState: this.serializeGameState(gameState),
@@ -169,7 +166,8 @@ export class GameService {
     const newPlayer = this.generatePlayer(playerName, playerId);
     team.members.push(newPlayer);
 
-    await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
+    await this.redisClient.set(`player:${playerId}`, gameId);
+    await this.updateGameStateOnRedis(gameId, gameState);
 
     return {
       gameState: this.serializeGameState(gameState),
@@ -196,7 +194,7 @@ export class GameService {
 
     player.isReady = true;
 
-    await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
+    await this.updateGameStateOnRedis(gameId, gameState);
 
     return {
       gameState: this.serializeGameState(gameState),
@@ -231,7 +229,7 @@ export class GameService {
       playerId: objectHolderId,
     };
 
-    await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
+    await this.updateGameStateOnRedis(gameId, gameState);
 
     return {
       gameState: this.serializeGameState(gameState),
@@ -256,7 +254,7 @@ export class GameService {
       playerId,
     };
 
-    await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
+    await this.updateGameStateOnRedis(gameId, gameState);
 
     return {
       gameState: this.serializeGameState(gameState),
@@ -337,10 +335,7 @@ export class GameService {
 
     gameState.emptyPlays = gameState.gameSize / 2;
 
-    await this.redisClient.set(
-      `game:${gameState.gameId}`,
-      JSON.stringify(gameState),
-    );
+    await this.updateGameStateOnRedis(gameId, gameState);
 
     return {
       gameState: this.serializeGameState(gameState),
@@ -354,16 +349,11 @@ export class GameService {
   async validateEmptyPlay(gameId: GameState['gameId']): Promise<boolean> {
     const gameState = await this.getGameState(gameId);
 
-    console.log(gameState.emptyPlays);
-
     if (gameState.emptyPlays === 0) return false;
 
     gameState.emptyPlays--;
 
-    await this.redisClient.set(
-      `game:${gameState.gameId}`,
-      JSON.stringify(gameState),
-    );
+    await this.updateGameStateOnRedis(gameId, gameState);
 
     return true;
   }
@@ -396,24 +386,11 @@ export class GameService {
     }
 
     if (isPlayerRemoved) {
-      await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
+      await this.updateGameStateOnRedis(gameId, gameState);
       await this.redisClient.del(`player:${playerId}`);
     }
 
     return isPlayerRemoved ? this.serializeGameState(gameState) : null;
-  }
-
-  async getAllGameRooms(): Promise<Record<string, GameState>> {
-    const gameRoomIds = await this.redisClient.smembers('gameRooms');
-    const gameRoomKeys = gameRoomIds.map((id) => `game:${id}`);
-    const gameStates = await this.redisClient.mget(...gameRoomKeys);
-    const gameRoomsWithValues: Record<string, GameState> = {};
-
-    gameRoomIds.forEach((id, index) => {
-      gameRoomsWithValues[id] = JSON.parse(gameStates[index]);
-    });
-
-    return gameRoomsWithValues;
   }
 
   async areTeamsReady(gameId: GameState['gameId']) {
@@ -445,12 +422,69 @@ export class GameService {
     return JSON.parse(gameData);
   }
 
-  generatePlayer(playerName: Player['name'], playerId: Player['id']) {
+  private generatePlayer(playerName: Player['name'], playerId: Player['id']) {
     return {
       id: playerId,
       name: playerName,
       isReady: false,
     };
+  }
+
+  @Cron('0 */4 * * *')
+  async removeInActiveRooms() {
+    const now = Date.now();
+    const INACTIVITY_LIMIT = 30 * 60 * 1000; // 30 minutes
+
+    const gameKeys = await this.redisClient.keys('game:*');
+
+    if (gameKeys.length === 0) return;
+
+    const pipeline = this.redisClient.multi();
+    gameKeys.forEach((key) => pipeline.get(key));
+    const gameStates = await pipeline.exec();
+
+    const inactiveRoomKeys = [];
+    const inactivePlayerKeys = [];
+
+    for (const [err, roomData] of gameStates) {
+      if (err || !roomData) continue;
+
+      const gameState: GameState = JSON.parse(roomData as string);
+      if (now - gameState.lastActivity > INACTIVITY_LIMIT) {
+        inactiveRoomKeys.push(`game:${gameState.gameId}`);
+
+        const teamAPlayerKeys = gameState.teams.teamA.members.map(
+          (player) => `player:${player.id}`,
+        );
+        const teamBPlayerKeys = gameState.teams.teamB.members.map(
+          (player) => `player:${player.id}`,
+        );
+
+        inactivePlayerKeys.push(...teamAPlayerKeys, ...teamBPlayerKeys);
+      }
+    }
+
+    if (inactiveRoomKeys.length > 0) {
+      const deletePipeline = this.redisClient.pipeline();
+      deletePipeline.del(...inactiveRoomKeys);
+      if (inactivePlayerKeys.length > 0) {
+        deletePipeline.del(...inactivePlayerKeys);
+      }
+      await deletePipeline.exec();
+
+      inactiveRoomKeys.forEach((key) =>
+        console.log(`Deleted inactive game room: ${key}`),
+      );
+    }
+  }
+
+  private async updateGameStateOnRedis(
+    gameId: GameState['gameId'],
+    gameState: GameState,
+  ) {
+    gameState.lastActivity = Date.now();
+
+    await this.redisClient.set(`game:${gameId}`, JSON.stringify(gameState));
   }
 
   private serializeGameState(gameState: GameState): PublicGameState {

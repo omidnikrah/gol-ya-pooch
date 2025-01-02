@@ -20,6 +20,7 @@
     "@nestjs/core": "^10.0.2",
     "@nestjs/platform-express": "^10.0.2",
     "@nestjs/platform-socket.io": "^10.4.5",
+    "@nestjs/schedule": "^4.1.2",
     "@nestjs/websockets": "^10.4.5",
     "@splinetool/react-spline": "^4.0.0",
     "@splinetool/runtime": "^1.9.37",
