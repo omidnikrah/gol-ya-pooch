@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for commit guidelines.
 
+# [v1.6.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.5.5...v1.6.0) (2025-01-02)
+
+## ✨ New Features
+- [`553ea31`](https://github.com/omidnikrah/gol-ya-pooch/commit/553ea31)  feat: notify other players while waiting for game master to spread object and fill hands 
+
+
+
+# [1.6.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.5.5...v1.6.0) (2025-01-02)
+
 # [v1.5.5](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.5.4...v1.5.5) (2025-01-02)
 
 ## 🐛 Bug Fixes
