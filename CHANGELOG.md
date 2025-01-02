@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for commit guidelines.
 
+# [v1.7.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.6.0...v1.7.0) (2025-01-02)
+
+## ✨ New Features
+- [`927440c`](https://github.com/omidnikrah/gol-ya-pooch/commit/927440c)  feat: display where is the object to the object holder player 
+
+
+
+# [1.7.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.6.0...v1.7.0) (2025-01-02)
+
 # [v1.6.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.5.5...v1.6.0) (2025-01-02)
 
 ## ✨ New Features
