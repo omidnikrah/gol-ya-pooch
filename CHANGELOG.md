@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for commit guidelines.
 
+# [v1.8.1](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.8.0...v1.8.1) (2025-01-02)
+
+
+
+## [1.8.1](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.8.0...v1.8.1) (2025-01-02)
+
 # [v1.8.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.7.0...v1.8.0) (2025-01-02)
 
 ## ✨ New Features
