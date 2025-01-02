@@ -234,11 +234,17 @@ export const useGameControls = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      phase === GamePhases.SPREADING_OBJECT &&
-      player?.id === gameState?.gameMaster
-    ) {
-      showToast('اوستا گل رو پخش کن', 5000, true, Toasts.SPREAD_OBJECT);
+    if (phase === GamePhases.SPREADING_OBJECT) {
+      if (player?.id === gameState?.gameMaster) {
+        showToast('اوستا گل رو پخش کن', 5000, true, Toasts.SPREAD_OBJECT);
+      } else {
+        showToast(
+          'وایسا اوستا گل رو پخش کنه',
+          5000,
+          true,
+          Toasts.WAITING_FOR_SPREAD_OBJECT,
+        );
+      }
     }
   }, [phase, player, gameState]);
 
@@ -256,6 +262,7 @@ export const useGameControls = () => {
           setGamePhase(GamePhases.PLAYING);
           filledHands.current = [];
           targetFillHandData.current = null;
+          dismissToastByName(Toasts.WAITING_FOR_SPREAD_OBJECT);
         }
       }, 10000);
     });

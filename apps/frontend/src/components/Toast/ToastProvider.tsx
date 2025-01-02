@@ -1,5 +1,5 @@
 import { AnimatePresence } from 'framer-motion';
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useRef } from 'react';
 import { v4 as uuidV4 } from 'uuid';
 
 import { Toast } from '.';
@@ -28,7 +28,7 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toasts, setToasts] = useState<ToastData[]>([]);
-  const [toastIds, setToastIds] = useState<Record<string, string>>({});
+  const toastIdsRef = useRef<Record<string, string>>({});
 
   const showToast = (
     message: string,
@@ -37,6 +37,10 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     toastName: string | undefined,
   ) => {
     const id = uuidV4();
+
+    if (toastName) {
+      toastIdsRef.current[toastName] = id;
+    }
 
     setToasts((prev) => [
       ...prev,
@@ -50,10 +54,6 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
 
     if (!keepAlive) {
       setTimeout(() => dismissToast(id), duration);
-    }
-
-    if (toastName) {
-      setToastId(toastName, id);
     }
 
     return id;
@@ -70,15 +70,12 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const setToastId = (key: string, id: string) => {
-    setToastIds((prev) => ({
-      ...prev,
-      [key]: id,
-    }));
+    toastIdsRef.current[key] = id;
   };
 
   const getToastId = (key: string) => {
-    const { [key]: toastId, ...rest } = toastIds;
-    setToastIds(rest);
+    const { [key]: toastId, ...rest } = toastIdsRef.current;
+    toastIdsRef.current = rest;
     return toastId;
   };
 
