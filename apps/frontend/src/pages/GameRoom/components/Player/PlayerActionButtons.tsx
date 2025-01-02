@@ -9,11 +9,16 @@ import { HandPosition } from '@gol-ya-pooch/shared';
 import { usePlayerContext } from './PlayerContext';
 
 export const PlayerActionButtons = () => {
-  const { gameState } = useGameStore();
+  const { gameState, emptyHands } = useGameStore();
   const { data } = usePlayerContext();
   const { requestEmptyPlay } = useRequestEmptyPlay();
   const { guessObjectLocation } = useGuessHand();
   const { requestEmptyHand } = useEmptyHand();
+
+  const shouldPlayerEmptyHand = !!emptyHands?.[data!.id];
+  const playerEmptyHandPosition = shouldPlayerEmptyHand
+    ? emptyHands[data!.id]
+    : '';
 
   const handleRequestEmptyPlay = () => {
     if (data?.id) {
@@ -40,8 +45,9 @@ export const PlayerActionButtons = () => {
           <div className="z-10 absolute top-0 flex shrink-0 opacity-0 group-hover:opacity-100 transition-opacity -translate-y-12 gap-1 siblings-container">
             <button
               type="button"
-              className="relative flex items-center justify-center appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item cursor-pointer pointer-events-auto"
+              className="relative flex items-center justify-center appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item cursor-pointer pointer-events-auto disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:!opacity-20 disabled:!opacity-20"
               onClick={() => handleEmptyHand('left')}
+              disabled={playerEmptyHandPosition === 'left'}
             >
               <img src="/images/btn-shape-right.svg" alt="" />
               <span className="absolute -mt-1.5 text-white font-bold text-sm">
@@ -50,8 +56,9 @@ export const PlayerActionButtons = () => {
             </button>
             <button
               type="button"
-              className="relative flex items-center justify-center appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item cursor-pointer pointer-events-auto"
+              className="relative flex items-center justify-center appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item cursor-pointer pointer-events-auto disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:!opacity-20 disabled:!opacity-20"
               onClick={() => handleEmptyHand('both')}
+              disabled={shouldPlayerEmptyHand}
             >
               <img src="/images/btn-shape-center.svg" alt="" />
               <span className="absolute -mt-1.5 text-white font-bold text-sm">
@@ -60,8 +67,9 @@ export const PlayerActionButtons = () => {
             </button>
             <button
               type="button"
-              className="relative flex items-center justify-center appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item cursor-pointer pointer-events-auto"
+              className="relative flex items-center justify-center appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item cursor-pointer pointer-events-auto disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:!opacity-20 disabled:!opacity-20"
               onClick={() => handleEmptyHand('right')}
+              disabled={playerEmptyHandPosition === 'right'}
             >
               <img src="/images/btn-shape-left.svg" alt="" />
               <span className="absolute -mt-1.5 text-white font-bold text-sm">
@@ -73,23 +81,26 @@ export const PlayerActionButtons = () => {
         <div className="w-full flex justify-between pointer-events-none">
           <button
             type="button"
-            className="rounded-full appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto"
+            className="rounded-full appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:!opacity-20 disabled:!opacity-20"
             onClick={() => handleGuessObject('left')}
+            disabled={playerEmptyHandPosition === 'left'}
           >
             <img src="/images/left-gol-btn.svg" alt="" />
           </button>
           <button
             type="button"
-            className="rounded-full appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto"
+            className="rounded-full appearance-none border-none border-0 hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:!opacity-20 disabled:!opacity-20"
             onClick={() => handleGuessObject('right')}
+            disabled={playerEmptyHandPosition === 'right'}
           >
             <img src="/images/right-gol-btn.svg" alt="" />
           </button>
         </div>
         <button
           type="button"
-          className="rounded-full appearance-none border-none border-0 translate-y-[-29px] hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto"
+          className="rounded-full appearance-none border-none border-0 translate-y-[-29px] hover:scale-110 transition-all hover:!opacity-100 sibling-item pointer-events-auto disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:!opacity-20 disabled:!opacity-20"
           onClick={handleRequestEmptyPlay}
+          disabled={shouldPlayerEmptyHand}
         >
           <img src="/images/empty-play-btn.svg" alt="" />
         </button>
