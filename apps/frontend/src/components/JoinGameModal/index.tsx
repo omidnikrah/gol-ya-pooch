@@ -9,6 +9,7 @@ import {
   PrivatePlayerData,
 } from '@gol-ya-pooch/shared';
 import clsx from 'clsx';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'wouter';
@@ -85,48 +86,60 @@ export const JoinGameModal = () => {
           </text>
         </svg>
       </button>
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-[#351351] bg-opacity-60 backdrop-blur-sm">
-          <div className="w-[450px] p-8 bg-white rounded-2xl text-center">
-            <h3 className="font-black text-xl text-primary">
-              {t('join_game.modal.title')}
-            </h3>
-            <div className="my-8 inline-flex shrink-0 bg-secondary-50 rounded-full p-1">
-              {gameSize.map((size) => (
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center bg-[#351351] bg-opacity-60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="w-[450px] p-8 bg-white rounded-2xl text-center"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+            >
+              <h3 className="font-black text-xl text-primary">
+                {t('join_game.modal.title')}
+              </h3>
+              <div className="my-8 inline-flex shrink-0 bg-secondary-50 rounded-full p-1">
+                {gameSize.map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    className={clsx(
+                      'px-4 py-2 text-white rounded-full cursor-pointer transition-all duration-200 appearance-none disabled:opacity-30 disabled:cursor-not-allowed',
+                      { 'bg-secondary': selectedGameSize === size },
+                    )}
+                    onClick={() => handleSetGameSize(size)}
+                  >
+                    {language === 'fa' ? convertToPersianNumbers(size) : size}{' '}
+                    {t('game_size.term')}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2 justify-center ltr-dir:flex-row-reverse">
                 <button
-                  key={size}
+                  className="px-8 py-2 bg-primary text-white rounded-full disabled:opacity-50 disabled:cursor-progress"
                   type="button"
-                  className={clsx(
-                    'px-4 py-2 text-white rounded-full cursor-pointer transition-all duration-200 appearance-none disabled:opacity-30 disabled:cursor-not-allowed',
-                    { 'bg-secondary': selectedGameSize === size },
-                  )}
-                  onClick={() => handleSetGameSize(size)}
+                  onClick={handleJoinGame}
+                  disabled={isLoading}
                 >
-                  {language === 'fa' ? convertToPersianNumbers(size) : size}{' '}
-                  {t('game_size.term')}
+                  {t('join_game.modal.join_btn')}
                 </button>
-              ))}
-            </div>
-            <div className="flex gap-2 justify-center ltr-dir:flex-row-reverse">
-              <button
-                className="px-8 py-2 bg-primary text-white rounded-full disabled:opacity-50 disabled:cursor-progress"
-                type="button"
-                onClick={handleJoinGame}
-                disabled={isLoading}
-              >
-                {t('join_game.modal.join_btn')}
-              </button>
-              <button
-                className="px-8 py-2 bg-gray-300 text-gray-600 rounded-full"
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-              >
-                {t('join_game.modal.cancel_btn')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                <button
+                  className="px-8 py-2 bg-gray-300 text-gray-600 rounded-full"
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  {t('join_game.modal.cancel_btn')}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
