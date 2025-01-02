@@ -146,10 +146,7 @@ export class GameGateway
   }
 
   @SubscribeMessage(Events.CHANGE_OBJECT_LOCATION)
-  async handleChangeObjectLocation(
-    @MessageBody() data: SetObjectLocationDTO,
-    @ConnectedSocket() client: Socket,
-  ) {
+  async handleChangeObjectLocation(@MessageBody() data: SetObjectLocationDTO) {
     const { gameId, playerId, hand } = data;
     const { objectLocation } = await this.gameService.changeObjectLocation(
       gameId,
@@ -157,15 +154,9 @@ export class GameGateway
       hand,
     );
 
-    if (objectLocation.playerId === client.id) {
-      client.emit(Events.PLAYER_RECEIVE_OBJECT, objectLocation);
-    } else {
-      this.server
-        .to(objectLocation.playerId)
-        .emit(Events.PLAYER_RECEIVE_OBJECT, objectLocation);
-    }
-
-    // this.server.to(gameId).emit(Events.OBJECT_LOCATION_CHANGED, gameState);
+    this.server
+      .to(objectLocation.playerId)
+      .emit(Events.PLAYER_RECEIVE_OBJECT, objectLocation);
   }
 
   @SubscribeMessage(Events.PLAYER_PLAYING)
@@ -175,10 +166,7 @@ export class GameGateway
   }
 
   @SubscribeMessage(Events.GUESS_OBJECT_LOCATION)
-  async handleGuessObjectLocation(
-    @MessageBody() data: GuessObjectLocationDTO,
-    @ConnectedSocket() client: Socket,
-  ) {
+  async handleGuessObjectLocation(@MessageBody() data: GuessObjectLocationDTO) {
     const { gameId, playerId, hand, isFromEmptyHand } = data;
     const {
       gameState,
@@ -201,16 +189,16 @@ export class GameGateway
         isGuessCorrect,
       });
     } else {
-      if (newObjectLocation.playerId === client.id) {
-        client.emit(Events.PLAYER_RECEIVE_OBJECT, newObjectLocation);
-      }
-
       this.server.to(gameId).emit(Events.GUESS_LOCATION_RESULT, {
         gameState,
         isGuessCorrect,
         isFromEmptyHand,
         oldObjectLocation,
       });
+
+      this.server
+        .to(newObjectLocation.playerId)
+        .emit(Events.PLAYER_RECEIVE_OBJECT, newObjectLocation);
     }
   }
 
@@ -252,25 +240,19 @@ export class GameGateway
   }
 
   @SubscribeMessage(Events.REQUEST_EMPTY_HAND)
-  async handlePlayerEmptyHand(
-    @MessageBody() data: PlayerEmptyHandDTO,
-    @ConnectedSocket() client: Socket,
-  ) {
+  async handlePlayerEmptyHand(@MessageBody() data: PlayerEmptyHandDTO) {
     const { gameId, playerId, hand } = data;
 
     const { hasObjectInHand, objectLocation } =
       await this.gameService.emptyPlayerHand(gameId, playerId, hand);
 
     if (hasObjectInHand) {
-      await this.handleGuessObjectLocation(
-        {
-          gameId,
-          playerId,
-          hand: objectLocation.hand === 'left' ? 'right' : 'left',
-          isFromEmptyHand: true,
-        },
-        client,
-      );
+      await this.handleGuessObjectLocation({
+        gameId,
+        playerId,
+        hand: objectLocation.hand === 'left' ? 'right' : 'left',
+        isFromEmptyHand: true,
+      });
       return;
     }
 

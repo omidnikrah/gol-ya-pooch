@@ -40,7 +40,7 @@ useMessagesStore.subscribe(
       setTimeout(() => {
         useMessagesStore
           .getState()
-          .removeMessage(messages[messages.length - 1].playerId);
+          .removeMessage(messages[messages.length - 1]?.playerId);
       }, 3000);
     }
   },

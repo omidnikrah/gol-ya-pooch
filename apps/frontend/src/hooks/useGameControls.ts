@@ -117,6 +117,10 @@ export const useGameControls = () => {
       });
 
       if (player?.objectLocation) {
+        setObjectLocation({
+          playerId: player.id,
+          hand,
+        });
         emit(Events.CHANGE_OBJECT_LOCATION, {
           playerId: player?.id,
           gameId: gameState?.gameId,
@@ -144,6 +148,7 @@ export const useGameControls = () => {
       gameState?.gameMaster === player?.id &&
       targetFillHandData.current
     ) {
+      setObjectLocation(null);
       emit(Events.CHANGE_OBJECT_LOCATION, {
         playerId: targetFillHandData.current.toPlayerId,
         gameId: gameState?.gameId,
@@ -171,7 +176,7 @@ export const useGameControls = () => {
     });
 
     on(Events.PLAYER_RECEIVE_OBJECT, (objectLocation: IObjectLocation) => {
-      showToast('توپ اومد دستت.', 5000);
+      showToast('گل اومد دستت.', 5000);
       setObjectLocation(objectLocation);
     });
 
@@ -197,7 +202,7 @@ export const useGameControls = () => {
 
           setMessage({
             playerId: data.oldObjectLocation.playerId,
-            message: `توپ دست ${persianHandPosition} من بود 😎`,
+            message: `گل دست ${persianHandPosition} من بود 😎`,
           });
         }
 
@@ -208,6 +213,7 @@ export const useGameControls = () => {
           targetFillHandData.current = null;
         }
 
+        setObjectLocation(null);
         setGameState(data.gameState);
       },
     );
@@ -246,7 +252,7 @@ export const useGameControls = () => {
         );
       }
     }
-  }, [phase, player, gameState]);
+  }, [phase, player?.id, gameState?.gameMaster]);
 
   useEffect(() => {
     on(Events.PLAYER_FILL_HAND, (data: PlayerFillHand) => {

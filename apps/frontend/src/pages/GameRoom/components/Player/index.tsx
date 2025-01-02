@@ -22,7 +22,11 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
 
   const shouldShowReadyBadge =
     data?.isReady && phasesToShowReadyBadge.includes(phase);
-  const shouldShowMeBadge = player?.id && player?.id === data?.id;
+  const isMe = player?.id && player?.id === data?.id;
+
+  const hasObject = isMe && player?.objectLocation;
+  const persianHandPosition =
+    player?.objectLocation?.hand === 'left' ? 'چپته' : 'راستته';
 
   const shouldShowActionButtons =
     gameState?.currentTurn === team &&
@@ -33,17 +37,23 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
     <TeamPlayer.Root team={team} position={position} data={data}>
       <TeamPlayer.Messages />
 
-      {shouldShowReadyBadge && (
-        <TeamPlayer.Badge position={position} type="ready">
-          آماده
-        </TeamPlayer.Badge>
-      )}
+      <TeamPlayer.Badges.Wrapper position={position}>
+        {shouldShowReadyBadge && (
+          <TeamPlayer.Badges.Badge type="success">
+            آماده
+          </TeamPlayer.Badges.Badge>
+        )}
 
-      {shouldShowMeBadge && (
-        <TeamPlayer.Badge position={position} type="me">
-          شما
-        </TeamPlayer.Badge>
-      )}
+        {hasObject && (
+          <TeamPlayer.Badges.Badge type="info">
+            گل دست {persianHandPosition}
+          </TeamPlayer.Badges.Badge>
+        )}
+
+        {isMe && (
+          <TeamPlayer.Badges.Badge type="info">شما</TeamPlayer.Badges.Badge>
+        )}
+      </TeamPlayer.Badges.Wrapper>
 
       {data?.name}
 

@@ -6,15 +6,15 @@ interface PlayerStore {
   player: PrivatePlayerData | null;
 
   setPlayerData: (state: PrivatePlayerData) => void;
-  setObjectLocation: (objectLocation: IObjectLocation) => void;
+  setObjectLocation: (objectLocation: IObjectLocation | null) => void;
 }
 
 export const usePlayerStore = create<PlayerStore>()(
   immer((set) => ({
     player: null,
 
-    setPlayerData: (data: PrivatePlayerData) => set(() => ({ player: data })),
-    setObjectLocation: (objectLocation: IObjectLocation) =>
+    setPlayerData: (data) => set(() => ({ player: data })),
+    setObjectLocation: (objectLocation) =>
       set((state) => {
         if (state.player) {
           state.player.objectLocation = objectLocation;

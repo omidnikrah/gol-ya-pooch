@@ -12,7 +12,7 @@ export interface Player {
 
 export interface PrivatePlayerData extends Player {
   team: TeamNames;
-  objectLocation?: IObjectLocation;
+  objectLocation?: IObjectLocation | null;
 }
 
 export interface Team {

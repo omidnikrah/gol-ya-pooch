@@ -1,12 +1,12 @@
 import { PlayerActionButtons } from './PlayerActionButtons';
-import { PlayerBadge } from './PlayerBadge';
+import { PlayerBadges } from './PlayerBadges';
 import { PlayerHands } from './PlayerHands';
 import { PlayerMessages } from './PlayerMessages';
 import { PlayerRoot } from './PlayerRoot';
 
 export const TeamPlayer = {
   Root: PlayerRoot,
-  Badge: PlayerBadge,
+  Badges: PlayerBadges,
   Hands: PlayerHands,
   Messages: PlayerMessages,
   ActionButtons: PlayerActionButtons,
