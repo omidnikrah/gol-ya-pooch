@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for commit guidelines.
 
+# [v1.8.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.7.0...v1.8.0) (2025-01-02)
+
+## ✨ New Features
+- [`f16f28e`](https://github.com/omidnikrah/gol-ya-pooch/commit/f16f28e)  feat: add english language 
+
+
+
+# [1.8.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.7.0...v1.8.0) (2025-01-02)
+
 # [v1.7.0](https://github.com/omidnikrah/gol-ya-pooch/compare/v1.6.0...v1.7.0) (2025-01-02)
 
 ## ✨ New Features
