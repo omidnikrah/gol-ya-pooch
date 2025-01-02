@@ -1,6 +1,7 @@
 import { GamePhases } from '@gol-ya-pooch/frontend/enums';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import { Player as IPlayerData, TeamNames } from '@gol-ya-pooch/shared';
+import { useTranslation } from 'react-i18next';
 
 import { TeamPlayer } from './TeamPlayer';
 
@@ -14,6 +15,7 @@ interface IPlayer {
 export const Player = ({ team, data, isJoined, position }: IPlayer) => {
   const { gameState, phase } = useGameStore();
   const { player } = usePlayerStore();
+  const { t } = useTranslation();
 
   const phasesToShowReadyBadge = [
     GamePhases.WAITING_FOR_PLAYERS,
@@ -25,8 +27,7 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
   const isMe = player?.id && player?.id === data?.id;
 
   const hasObject = isMe && player?.objectLocation;
-  const persianHandPosition =
-    player?.objectLocation?.hand === 'left' ? 'چپته' : 'راستته';
+  const objectHandPosition = player?.objectLocation?.hand;
 
   const shouldShowActionButtons =
     gameState?.currentTurn === team &&
@@ -40,18 +41,24 @@ export const Player = ({ team, data, isJoined, position }: IPlayer) => {
       <TeamPlayer.Badges.Wrapper position={position}>
         {shouldShowReadyBadge && (
           <TeamPlayer.Badges.Badge type="success">
-            آماده
+            {t('ready')}
           </TeamPlayer.Badges.Badge>
         )}
 
         {hasObject && (
           <TeamPlayer.Badges.Badge type="info">
-            گل دست {persianHandPosition}
+            {t(
+              objectHandPosition === 'left'
+                ? 'object_location.left_hand'
+                : 'object_location.right_hand',
+            )}
           </TeamPlayer.Badges.Badge>
         )}
 
         {isMe && (
-          <TeamPlayer.Badges.Badge type="info">شما</TeamPlayer.Badges.Badge>
+          <TeamPlayer.Badges.Badge type="info">
+            {t('you')}
+          </TeamPlayer.Badges.Badge>
         )}
       </TeamPlayer.Badges.Wrapper>
 

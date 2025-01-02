@@ -1,0 +1,65 @@
+{
+  "home.title": "گل <lighter>یا</lighter> پــوچ؟",
+  "home.description": "گل یا پوچ آنلاین دیدی؟ بیا بازی کنیم و ببینی پس اینکاره نیستی!",
+  "home.join_game.btn": "جوین خودکار به بازی",
+  "home.create_game.btn": "ساخت بازی جدید",
+
+  "join_game.modal.title": "بازی چند نفره ببرمت؟",
+  "join_game.modal.join_btn": "جوین به بازی",
+  "join_game.modal.cancel_btn": "بیخیال",
+
+  "create_game.modal.title": "بازی چند نفره بسازم برات؟",
+  "create_game.modal.create_btn": "ساخت بازی",
+  "create_game.modal.cancel_btn": "بیخیال",
+
+  "join_game_by_id.modal.title": "کدوم تیم میخوای جوین بشی؟",
+  "join_game_by_id.modal.select_team": "تیم رو انتخاب کن",
+  "join_game_by_id.modal.join_btn": "جوین به تیم {{teamColor}}",
+
+  "share_link.title": "لینک بازی رو بفرست برای دوستات تا جوین بشن به بازی \uD83D\uDE0E",
+  "share_link.copy_btn": "کپی لینک",
+  "share_link.copied.toast_message": "لینک بازی کپی شد.",
+
+  "starting_team.message": "تیم {{teamColor}} بازی رو شروع میکنه",
+
+  "empty_play.toast_message": "شما باید خالی بازی کنید",
+  "already_filled_hand.toast_message": "دست این بازیکن رو پر کردی",
+  "received_object.toast_message": "گل اومد دستت.",
+  "correct_guess.toast_message": "حدس گل درست بود \uD83C\uDF89",
+  "wrong_guess.toast_message": "دست گل نبود",
+  "empty_object.toast_message": "گل رو پوچ کردی!",
+  "player_object_location_notifier.toast_message": "گل دست {{handPosition}} من بود \uD83D\uDE0E",
+  "game_master_spread_object.toast_message": "اوستا گل رو پخش کن",
+  "wait_for_spread_object.toast_message": "وایسا اوستا گل رو پخش کنه",
+
+  "keyboard_shortcuts_modal.title": "راهنمای بازی",
+  "keyboard_shortcuts_modal.arrow_keys.description": "برای پخش کردن گل و خالی بازی کردن باید از Arrow Keyهای کیبورد استفاده کنی:",
+  "keyboard_shortcuts_modal.space_key.description": "اگر اوستا بودی و موقع پخش گل خواستی گل رو بدی به بازیکن، باید دکمه Space کیبوردت رو بزنی",
+  "keyboard_shortcuts_modal.understand.btn": "ایول، فهمیدم!",
+
+  "left_hand_empty": "چپت پوچ",
+  "both_hands_empty": "جفت پوچ",
+  "right_hand_empty": "راستت پوچ",
+
+  "object_location.left_hand": "گل دست چپته",
+  "object_location.right_hand": "گل دست راستته",
+
+  "mobile_banner.message": "لطفا برای تجربه بهتر، بازی را در کامپیوتر باز کنید.",
+
+  "room_info.object_holder_team": "توپ دست تیم <teamColor>{{teamColor}}</teamColor>",
+  "room_info.game_round.title": "راند <bold>{{gameRound}}</bold> بازی",
+
+  "game_result.winner_team": "تیم <teamColor>{{teamColor}}</teamColor> برنده شد.",
+  "game_result.back_home": "بازگشت به صفحه اصلی",
+
+  "room.not_found.message": "همچین بازی ای وجود نداره یا شایدم تموم شده! \uD83E\uDD37\uD83C\uDFFB\u200D♂\uFE0F",
+
+  "ready.btn": "آماده شروع بازی",
+  "you": "شما",
+  "ready": "آماده",
+  "game_size.term": "نفره",
+  "teamAColor": "آبی",
+  "teamBColor": "قرمز",
+  "left": "چپ",
+  "right": "راست"
+}

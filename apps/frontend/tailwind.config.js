@@ -88,7 +88,9 @@ module.exports = {
     },
   },
   plugins: [
-    function ({ addUtilities }) {
+    function ({ addUtilities, addVariant }) {
+      addVariant('rtl-dir', "html[lang='fa'] &");
+      addVariant('ltr-dir', "html[lang='en'] &");
       addUtilities({
         '.perspective-1000': {
           perspective: '1000px',
@@ -113,6 +115,12 @@ module.exports = {
         },
         '.overflow-unset': {
           overflow: 'unset',
+        },
+        '.direction-rtl': {
+          direction: 'rtl',
+        },
+        '.direction-ltr': {
+          direction: 'ltr',
         },
       });
     },

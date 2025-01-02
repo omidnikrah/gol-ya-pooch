@@ -1,4 +1,5 @@
 import {
+  ChangeLanguage,
   GitHubLink,
   MobileBanner,
   ToastProvider,
@@ -12,6 +13,7 @@ const App = () => {
       <AppRouter />
       <GitHubLink />
       <MobileBanner />
+      <ChangeLanguage />
     </ToastProvider>
   );
 };

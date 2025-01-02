@@ -4,6 +4,7 @@ import { useGameControls, useSocket } from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore, usePlayerStore } from '@gol-ya-pooch/frontend/stores';
 import { TeamNames } from '@gol-ya-pooch/shared';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import GameTableIcon from './assets/game-table.svg';
 import {
@@ -20,6 +21,7 @@ const GameRoomPage = () => {
   const { error } = useSocket();
   const { phase, gameState } = useGameStore();
   const { player } = usePlayerStore();
+  const { t } = useTranslation();
   const gameSize = gameState ? gameState.gameSize / 2 : 0;
   const playerTeamName = player?.team ?? 'teamA';
   useGameControls();
@@ -35,8 +37,8 @@ const GameRoomPage = () => {
 
   if (error && error.type === 'game_not_found') {
     return (
-      <div className="text-center text-white text-2xl">
-        همچین بازی‌ای وجود نداره یا شایدم تموم شده! 🤷🏻‍♂️
+      <div className="text-center text-white text-2xl ltr-dir:direction-ltr">
+        {t('room.not_found.message')}
       </div>
     );
   }

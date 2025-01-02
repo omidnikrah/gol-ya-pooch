@@ -14,7 +14,7 @@ interface IPlayerBadgeProps {
 const PlayerBadgesWrapper = ({ children, position }: IPlayerBadgesProps) => (
   <div
     className={clsx(
-      'absolute translate-x-1/2 right-1/2 flex flex-col gap-3 items-center w-full',
+      'absolute translate-x-1/2 right-1/2 flex flex-col gap-3 items-center w-full ltr-dir:direction-ltr',
       {
         'translate-y-10 top-full': position === 'bottom',
         '-translate-y-10 bottom-full': position === 'top',

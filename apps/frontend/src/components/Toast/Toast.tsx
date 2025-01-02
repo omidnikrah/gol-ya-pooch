@@ -20,7 +20,7 @@ export const Toast = ({ message }: IToastProps) => {
       animate={{
         transform: transformStartAnimation,
       }}
-      className="bg-white text-gray-600 rounded-full px-8 py-4 animate-jelly mt-3 text-center"
+      className="bg-white text-gray-600 rounded-full px-8 py-4 animate-jelly mt-3 text-center ltr-dir:direction-ltr"
     >
       {message}
     </motion.div>

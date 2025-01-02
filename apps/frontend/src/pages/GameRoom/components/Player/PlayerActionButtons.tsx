@@ -5,6 +5,7 @@ import {
 } from '@gol-ya-pooch/frontend/hooks';
 import { useGameStore } from '@gol-ya-pooch/frontend/stores';
 import { HandPosition } from '@gol-ya-pooch/shared';
+import { useTranslation } from 'react-i18next';
 
 import { usePlayerContext } from './PlayerContext';
 
@@ -14,6 +15,10 @@ export const PlayerActionButtons = () => {
   const { requestEmptyPlay } = useRequestEmptyPlay();
   const { guessObjectLocation } = useGuessHand();
   const { requestEmptyHand } = useEmptyHand();
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation();
 
   const shouldPlayerEmptyHand = !!emptyHands?.[data!.id];
   const playerEmptyHandPosition = shouldPlayerEmptyHand
@@ -51,7 +56,7 @@ export const PlayerActionButtons = () => {
             >
               <img src="/images/btn-shape-right.svg" alt="" />
               <span className="absolute -mt-1.5 text-white font-bold text-sm">
-                چپت پوچ
+                {t('left_hand_empty')}
               </span>
             </button>
             <button
@@ -62,7 +67,7 @@ export const PlayerActionButtons = () => {
             >
               <img src="/images/btn-shape-center.svg" alt="" />
               <span className="absolute -mt-1.5 text-white font-bold text-sm">
-                جفت پوچ
+                {t('both_hands_empty')}
               </span>
             </button>
             <button
@@ -73,7 +78,7 @@ export const PlayerActionButtons = () => {
             >
               <img src="/images/btn-shape-left.svg" alt="" />
               <span className="absolute -mt-1.5 text-white font-bold text-sm">
-                راستت پوچ
+                {t('right_hand_empty')}
               </span>
             </button>
           </div>
@@ -85,7 +90,7 @@ export const PlayerActionButtons = () => {
             onClick={() => handleGuessObject('left')}
             disabled={playerEmptyHandPosition === 'left'}
           >
-            <img src="/images/left-gol-btn.svg" alt="" />
+            <img src={`/images/${language}-left-gol-btn.svg`} alt="" />
           </button>
           <button
             type="button"
@@ -93,7 +98,7 @@ export const PlayerActionButtons = () => {
             onClick={() => handleGuessObject('right')}
             disabled={playerEmptyHandPosition === 'right'}
           >
-            <img src="/images/right-gol-btn.svg" alt="" />
+            <img src={`/images/${language}-right-gol-btn.svg`} alt="" />
           </button>
         </div>
         <button
@@ -102,7 +107,7 @@ export const PlayerActionButtons = () => {
           onClick={handleRequestEmptyPlay}
           disabled={shouldPlayerEmptyHand}
         >
-          <img src="/images/empty-play-btn.svg" alt="" />
+          <img src={`/images/${language}-empty-play-btn.svg`} alt="" />
         </button>
       </div>
     </>

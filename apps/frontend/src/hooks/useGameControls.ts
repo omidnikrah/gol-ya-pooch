@@ -16,6 +16,7 @@ import {
   PublicGameState,
 } from '@gol-ya-pooch/shared';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'wouter';
 
 import { useKeyPress, useSocket, useSound } from '.';
@@ -47,6 +48,7 @@ export const useGameControls = () => {
     hand: HandPosition;
   } | null>();
   const filledHands = useRef<string[]>([]);
+  const { t } = useTranslation();
   const { play: playNotificationSound } = useSound('/sounds/notification.mp3');
   const { play: playBuzzSound } = useSound('/sounds/buzz.mp3');
   const { play: playEmptyPlayingSound } = useSound('/sounds/empty-playing.mp3');
@@ -92,7 +94,7 @@ export const useGameControls = () => {
           filledHands: filledHands.current,
         });
       } else {
-        showToast('دست این بازیکن رو پر کردی');
+        showToast(t('already_filled_hand.toast_message'));
       }
     }
   };
@@ -162,7 +164,7 @@ export const useGameControls = () => {
     if (requestedPlayerIdToEmptyPlay === player?.id && !isPlaying) {
       playNotificationSound();
       showToast(
-        'شما باید خالی بازی کنید',
+        t('empty_play.toast_message'),
         5000,
         true,
         Toasts.REQUESTED_EMPTY_PLAY,
@@ -176,7 +178,7 @@ export const useGameControls = () => {
     });
 
     on(Events.PLAYER_RECEIVE_OBJECT, (objectLocation: IObjectLocation) => {
-      showToast('گل اومد دستت.', 5000);
+      showToast(t('received_object.toast_message'), 5000);
       setObjectLocation(objectLocation);
     });
 
@@ -189,20 +191,25 @@ export const useGameControls = () => {
         oldObjectLocation: IObjectLocation;
       }) => {
         if (data.isGuessCorrect) {
-          showToast('حدس گل درست بود 🎉', 5000);
+          showToast(t('correct_guess.toast_message'), 5000);
         } else {
           playBuzzSound();
           showToast(
-            data.isFromEmptyHand ? 'گل رو پوچ کردی!' : 'دست گل نبود',
+            t(
+              data.isFromEmptyHand
+                ? 'empty_object.toast_message'
+                : 'wrong_guess.toast_message',
+            ),
             5000,
           );
 
-          const persianHandPosition =
-            data.oldObjectLocation.hand === 'left' ? 'چپ' : 'راست';
-
           setMessage({
             playerId: data.oldObjectLocation.playerId,
-            message: `گل دست ${persianHandPosition} من بود 😎`,
+            message: t('player_object_location_notifier.toast_message', {
+              handPosition: t(
+                data.oldObjectLocation.hand === 'left' ? 'left' : 'right',
+              ),
+            }),
           });
         }
 
@@ -242,10 +249,15 @@ export const useGameControls = () => {
   useEffect(() => {
     if (phase === GamePhases.SPREADING_OBJECT) {
       if (player?.id === gameState?.gameMaster) {
-        showToast('اوستا گل رو پخش کن', 5000, true, Toasts.SPREAD_OBJECT);
+        showToast(
+          t('game_master_spread_object.toast_message'),
+          5000,
+          true,
+          Toasts.SPREAD_OBJECT,
+        );
       } else {
         showToast(
-          'وایسا اوستا گل رو پخش کنه',
+          t('wait_for_spread_object.toast_message'),
           5000,
           true,
           Toasts.WAITING_FOR_SPREAD_OBJECT,

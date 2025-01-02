@@ -1,0 +1,65 @@
+{
+  "home.title": "Gol <lighter>ya</lighter> Pooch?",
+  "home.description": "Guess the hand, dodge the bluff, don’t get played! \uD83D\uDC4A\uD83C\uDFFB",
+  "home.join_game.btn": "Auto-join a game",
+  "home.create_game.btn": "Create new game",
+
+  "join_game.modal.title": "How big of a game you wanna jump into?",
+  "join_game.modal.join_btn": "Join the game",
+  "join_game.modal.cancel_btn": "Nah, forget it",
+
+  "create_game.modal.title": "How big of a squad should I set up for you?",
+  "create_game.modal.create_btn": "Create game",
+  "create_game.modal.cancel_btn": "Nah, forget it",
+
+  "join_game_by_id.modal.title": "Which team are you joining?",
+  "join_game_by_id.modal.select_team": "Pick your team",
+  "join_game_by_id.modal.join_btn": "Join the {{teamColor}} team",
+
+  "share_link.title": "Send this game link to your friends so they can join \uD83D\uDE0E",
+  "share_link.copy_btn": "Copy link",
+  "share_link.copied.toast_message": "Game link copied!",
+
+  "starting_team.message": "The {{teamColor}} team is kicking things off",
+
+  "empty_play.toast_message": "You gotta play empty!",
+  "already_filled_hand.toast_message": "This player's hand is already full!",
+  "received_object.toast_message": "You got the Gol in your hand!",
+  "correct_guess.toast_message": "You guessed the Gol right! \uD83C\uDF89",
+  "wrong_guess.toast_message": "No ball in that hand!",
+  "empty_object.toast_message": "You emptied the ball!",
+  "player_object_location_notifier.toast_message": "The ball was in my {{handPosition}} hand \uD83D\uDE0E",
+  "game_master_spread_object.toast_message": "Master, spread the ball!",
+  "wait_for_spread_object.toast_message": "Hold up, the master’s spreading the ball",
+
+  "keyboard_shortcuts_modal.title": "Game Guide",
+  "keyboard_shortcuts_modal.arrow_keys.description": "Use your keyboard's Arrow Keys to spread the ball or play empty:",
+  "keyboard_shortcuts_modal.space_key.description": "If you’re the master and want to pass the Gol, hit the Spacebar",
+  "keyboard_shortcuts_modal.understand.btn": "Got it, awesome!",
+
+  "left_hand_empty": "Left’s empty",
+  "both_hands_empty": "Both empty",
+  "right_hand_empty": "Right’s empty",
+
+  "object_location.left_hand": "Left hand’s the Gol!",
+  "object_location.right_hand": "Right hand’s the Gol!",
+
+  "mobile_banner.message": "For a better experience, play this game on a computer.",
+
+  "room_info.object_holder_team": "<teamColor>{{teamColor}}</teamColor> team’s got the gol!",
+  "room_info.game_round.title": "Round <bold>{{gameRound}}</bold> of the game",
+
+  "game_result.winner_team": "{{teamColor}} team wins!",
+  "game_result.back_home": "Back to home",
+
+  "room.not_found.message": "Looks like this game doesn’t exist, or it’s already wrapped up! \uD83E\uDD37\uD83C\uDFFB\u200D♂\uFE0F",
+
+  "ready.btn": "Ready to start the game",
+  "you": "You",
+  "ready": "Ready",
+  "game_size.term": "Players",
+  "teamAColor": "Blue",
+  "teamBColor": "Red",
+  "left": "Left",
+  "right": "Right"
+}

@@ -5,6 +5,7 @@ import { convertToPersianNumbers } from '@gol-ya-pooch/frontend/utils';
 import { Events, GameState } from '@gol-ya-pooch/shared';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Coin } from '..';
 
@@ -22,6 +23,10 @@ export const CoinFlipScene = () => {
     enable: phase === GamePhases.FLIPPING_COIN,
   });
   const { emit, on, off } = useSocket();
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation();
 
   useEffect(() => {
     if (phase === GamePhases.FLIPPING_COIN && !gameState?.currentTurn) {
@@ -64,7 +69,9 @@ export const CoinFlipScene = () => {
               className="text-6xl text-white"
               transition={TRANSITION_CONFIG}
             >
-              {convertToPersianNumbers(countdown)}
+              {language === 'fa'
+                ? convertToPersianNumbers(countdown)
+                : countdown}
             </motion.h1>
           </AnimatePresence>
         )}
@@ -78,9 +85,13 @@ export const CoinFlipScene = () => {
               className="text-4xl text-white"
               transition={TRANSITION_CONFIG}
             >
-              {gameState?.currentTurn === 'teamA'
-                ? 'تیم آبی بازی رو شروع میکنه'
-                : 'تیم قرمز بازی رو شروع میکنه'}
+              {t('starting_team.message', {
+                teamColor: t(
+                  gameState?.currentTurn === 'teamA'
+                    ? 'teamAColor'
+                    : 'teamBColor',
+                ),
+              })}
             </motion.h2>
           </AnimatePresence>
         )}

@@ -9,6 +9,7 @@ import {
 } from '@gol-ya-pooch/shared';
 import clsx from 'clsx';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const JoinGameRoomModal = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,6 +17,7 @@ export const JoinGameRoomModal = () => {
   const { emit, on, off } = useSocket();
   const { gameState, setGameState, setGamePhase } = useGameStore();
   const { setPlayerData } = usePlayerStore();
+  const { t } = useTranslation();
   const { play: playJoinSound } = useSound('/sounds/join.mp3');
 
   const emptyTeams = useMemo(() => {
@@ -70,7 +72,7 @@ export const JoinGameRoomModal = () => {
     <div className="fixed inset-0 flex items-center justify-center bg-[#351351] bg-opacity-60 backdrop-blur-sm z-20">
       <div className="w-[450px] p-8 bg-white rounded-2xl text-center">
         <h3 className="font-black text-xl text-primary">
-          کدوم تیم میخوای جوین بشی؟
+          {t('join_game_by_id.modal.title')}
         </h3>
         <div className="py-10 flex gap-2 justify-center">
           {emptyTeams.includes('teamA') && (
@@ -109,10 +111,14 @@ export const JoinGameRoomModal = () => {
             onClick={handleJoinGame}
             disabled={isLoading || !selectedTeam}
           >
-            {!selectedTeam && 'تیم رو انتخاب کن'}
+            {!selectedTeam && t('join_game_by_id.modal.select_team')}
 
             {selectedTeam &&
-              `جوین به ${selectedTeam === 'teamA' ? 'تیم آبی' : 'تیم قرمز'}`}
+              t('join_game_by_id.modal.join_btn', {
+                teamColor: t(
+                  selectedTeam === 'teamA' ? 'teamAColor' : 'teamBColor',
+                ),
+              })}
           </button>
         </div>
       </div>

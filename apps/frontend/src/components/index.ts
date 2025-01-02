@@ -4,3 +4,4 @@ export * from './Toast';
 export * from './KeyboardShortcutsModal';
 export * from './GitHubLink';
 export * from './MobileBanner';
+export * from './ChangeLanguage';
