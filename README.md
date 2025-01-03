@@ -1,5 +1,7 @@
 # 👊🏻 **Gol ya Pooch** - Real-time Multiplayer Guessing Game
 
+<img src=".github/banner.jpg" alt="Gol ya Pooch Banner" />
+
 **Gol ya Pooch is a fun and fast-paced realtime multiplayer guessing game brought to the web! 🕹️ One player hides the “gol” (a small object) in one hand, and the other has to figure out which hand it’s in. It’s all about bluffing, quick thinking, and outsmarting your opponents. Guess the hand, dodge the bluff, and don’t get played! 🎯**
 
 <br />
